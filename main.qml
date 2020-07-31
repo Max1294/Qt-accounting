@@ -11,6 +11,23 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
+    ListModel {
+        id: libraryModel
+        ListElement {
+            title: "A Masterpiece"
+            author: "Gabriel"
+        }
+        ListElement {
+            title: "Brilliance"
+            author: "Jens"
+        }
+        ListElement {
+            title: "Outstanding"
+            author: "Frederik"
+        }
+    }
+
+
     SplitView {
         anchors.top: _menuBar.bottom
         anchors.fill: parent
@@ -46,6 +63,18 @@ ApplicationWindow {
 
                             TableView{
                                 anchors.fill: _tab1
+
+                                TableViewColumn {
+                                    role: "title"
+                                    title: "Title"
+                                    width: _tab1.width / 2
+                                }
+                                TableViewColumn {
+                                    role: "author"
+                                    title: "Author"
+                                    width: _tab1.width / 2
+                                }
+                                model: libraryModel
                             } // TableView
                         } // Tab
 
