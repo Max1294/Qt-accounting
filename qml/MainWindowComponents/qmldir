@@ -1,0 +1,5 @@
+module MainWindowComponents
+DBArea 1.0 DBArea.qml
+MenuBarArea 1.0 MenuBarArea.qml
+DBInfoArea 1.0 DBInfoArea.qml
+MainArea 1.0 MainArea.qml
