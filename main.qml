@@ -14,23 +14,56 @@ ApplicationWindow {
     SplitView {
         anchors.top: _menuBar.bottom
         anchors.fill: parent
+
         Item {
+            id: _parentItem
             width: parent.width / 3
             Layout.minimumWidth: Math.min(100, _root.width * 0.3)
-            TreeView{
+            Layout.maximumWidth: _root.width * 0.7
+            TreeView {
                 anchors.fill: parent
-            }
-        }
-        Item{
+            } // TreeView
+        } // Item
+
+        Item {
+            id: _mainArea
              width: parent.width / 2
              Layout.maximumWidth: _root.width * 0.9
              Column {
                 Repeater {
-                    TableView{}
-                }
-             }
-        }
-    }
+                    model: 1
+                    TabView
+                    {
+                        id: _tabView
+                        width: _root.width - _parentItem.width
+                        height: _root.height - _menuBar.height
+
+                        Tab {
+                            id: _tab1
+                            width: _tabView.width
+                            height: _tabView.height
+                            title: "tab_1"
+
+                            TableView{
+                                anchors.fill: _tab1
+                            } // TableView
+                        } // Tab
+
+                        Tab {
+                            id: _tab2
+                            title: "tab_2"
+
+                            Rectangle {
+                                width: _tab2.width
+                                height: _tab2.height
+                                color: "green"
+                            } // Rectangle
+                        } // Tab
+                    } // TabView
+                } // Repeater
+             } // Column
+        } // Item
+    } // SplitView
 
     menuBar: MenuBar {
         id: _menuBar
