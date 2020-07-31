@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
-TableView{
+TableView {
 //    anchors.fill: _tab1
     TableViewColumn {
         role: "title"
@@ -31,14 +31,27 @@ TableView{
         }
     } // ListModel
 
-
+    alternatingRowColors: false
     model: libraryModel
+    backgroundVisible: false
 
     style: TableViewStyle {
+        // TODO: centerIn, backgroundColor
+        headerDelegate: Text {
+            text: styleData.value
+            color: "green"
+            font.pointSize: 8
+        } // headerDelegate
+
+        itemDelegate: Text {
+            text: styleData.value
+            color: "black"
+            font.pointSize: 8
+        } // itemDelegate: Text
+
         rowDelegate: Rectangle {
             id: _rowDeleg
             color: "lightsteelblue"
-
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.RightButton
