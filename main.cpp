@@ -1,11 +1,18 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include "tablemodel.h"
+#include "function.h"
+
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
+
+    qmlRegisterType<TableModel>("TableModel", 0, 1, "TableModel");
+
+    OpenDatabase("TestDB");
 
     QQmlApplicationEngine engine;
     engine.addImportPath(":/qml");

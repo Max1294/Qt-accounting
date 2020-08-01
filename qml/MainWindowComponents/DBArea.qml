@@ -1,9 +1,12 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.4
+
 import QtQuick.Controls.Styles 1.4
+import QtQuick 2.12
+import TableModel 0.1
+import QtQuick.Controls 1.4
 
 TableView {
-//    anchors.fill: _tab1
+    anchors.fill: _tab1
     TableViewColumn {
         role: "title"
         title: "Title"
