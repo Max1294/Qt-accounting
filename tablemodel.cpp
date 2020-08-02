@@ -10,6 +10,13 @@ TableModel::TableModel(QObject *parent) :
     query.next();
     m_rowCount = query.value(0).toInt();
 
+    qDebug() << "names: " << query.exec("pragma table_info(Contacts)"); // get columns names
+    while(query.next())
+    {
+        qDebug() << "data " << query.value(1).toString();
+//        roles.push_back(query.value(1).toInt());
+    }
+
     query.exec("SELECT Name, Surname, Number FROM Contacts");
     QSqlRecord record = query.record();
     m_columnCount = record.count();

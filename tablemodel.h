@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QAbstractTableModel>
 #include "dbmanager.h"
+#include <QVector>
 
 class TableModel : public QAbstractTableModel
 {
@@ -19,4 +20,5 @@ private:
     DBManager& m_DBManager;
     int m_rowCount;
     int m_columnCount;
+//    QVector<int> roles;
 };
