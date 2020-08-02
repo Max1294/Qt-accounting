@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QAbstractTableModel>
+#include "dbmanager.h"
 
 class TableModel : public QAbstractTableModel
 {
@@ -14,4 +15,8 @@ public:
 
     QVariant data(const QModelIndex& index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
+private:
+    DBManager& m_DBManager;
+    int m_rowCount;
+    int m_columnCount;
 };

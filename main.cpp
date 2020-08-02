@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<TableModel>("TableModel", 0, 1, "TableModel");
 
-    OpenDatabase("TestDB");
+//    OpenDatabase("TestDB");
 
     QQmlApplicationEngine engine;
     engine.addImportPath(":/qml");
