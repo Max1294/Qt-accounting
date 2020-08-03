@@ -1,5 +1,6 @@
 #include "tablemodel.h"
 #include <QDebug>
+
 TableModel::TableModel(QObject *parent) :
     m_DBManager{DBManager::instance()}
 {
@@ -11,16 +12,30 @@ TableModel::TableModel(QObject *parent) :
     m_rowCount = query.value(0).toInt();
 
     qDebug() << "names: " << query.exec("pragma table_info(Contacts)"); // get columns names
-    while(query.next())
+    for(int i = 1; query.next(); ++i)
     {
         qDebug() << "data " << query.value(1).toString();
-//        roles.push_back(query.value(1).toInt());
+        m_roleNames.insert((Qt::UserRole + i),  query.value(1).toByteArray());
+        qDebug() << "m_roleNames " << m_roleNames[Qt::UserRole + i];
     }
 
     query.exec("SELECT Name, Surname, Number FROM Contacts");
     QSqlRecord record = query.record();
     m_columnCount = record.count();
+    m_rows.reserve(m_rowCount);
+    m_rows.resize(m_rowCount);
 
+    for(int i = 0; query.next(); ++i)
+    {
+        for(int j = 0; j < m_columnCount; ++j)
+        {
+            m_rows[i] << QVariant::fromValue(query.value(i));
+        }
+
+    }
+
+    //    m_rows = {"Jhon", "Bruno", 32};
+    qDebug() << "m_rows: " << m_rows;
     qDebug() << "Number of columns: " << m_columnCount << "Number of rows: " << m_rowCount;
 }
 
@@ -36,18 +51,24 @@ int TableModel::columnCount(const QModelIndex &) const
 
 QVariant TableModel::data(const QModelIndex &index, int role) const
 {
-    switch(role) {
-        case Qt::DisplayRole:
-            return QString("%1, %2, %3").arg(index.column()).arg(index.row());
-    default:
-        break;
+    if(index.isValid() && role == Qt::DisplayRole)
+    {
+        return QVariant::fromValue(m_rows[index.row()]);
     }
 
-    return QVariant();
+    return QVariant{};
 }
 
 QHash<int, QByteArray> TableModel::roleNames() const
 {
-    return { {Qt::DisplayRole, "display"} };
+    return m_roleNames;
+}
+
+QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole || orientation != Qt::Horizontal) {
+                return QVariant();
+    }
+    return QVariant::fromValue(m_roleNames[section]);
 }
 
