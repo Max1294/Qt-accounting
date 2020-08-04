@@ -14,9 +14,12 @@ TableModel::TableModel(QObject *parent) :
     qDebug() << "names: " << query.exec("pragma table_info(Contacts)"); // get columns names
     for(int i = 1; query.next(); ++i)
     {
-        qDebug() << "data " << query.value(1).toString();
-        m_roleNames.insert((Qt::UserRole + i),  query.value(1).toByteArray());
-        qDebug() << "m_roleNames " << m_roleNames[Qt::UserRole + i];
+         qDebug() << "data " << query.value(1).toString();
+         // m_roleNames.insert((Qt::UserRole + i),  query.value(1).toByteArray());
+         m_roles += query.value(1).toByteArray();
+         m_roleNames[Qt::UserRole + i] = query.value(1).toByteArray();
+         qDebug() << "m_roleNames " << m_roleNames[Qt::UserRole + i];
+         qDebug() << "m_roles " << m_roles;
     }
 
     query.exec("SELECT Name, Surname, Number FROM Contacts");
@@ -29,7 +32,7 @@ TableModel::TableModel(QObject *parent) :
     {
         for(int j = 0; j < m_columnCount; ++j)
         {
-            m_rows[i] << QVariant::fromValue(query.value(i));
+            m_rows[i] << QVariant::fromValue(query.value(j));
         }
 
     }
@@ -51,17 +54,20 @@ int TableModel::columnCount(const QModelIndex &) const
 
 QVariant TableModel::data(const QModelIndex &index, int role) const
 {
-    if(index.isValid() && role == Qt::DisplayRole)
+    if(!index.isValid())// && role == Qt::DisplayRole)
     {
-        return QVariant::fromValue(m_rows[index.row()]);
+        return QVariant{};
     }
 
-    return QVariant{};
+    if (role == Qt::DisplayRole) return QString("moc data");
+
+    return QVariant::fromValue(m_rows[role]);
 }
 
 QHash<int, QByteArray> TableModel::roleNames() const
 {
     return m_roleNames;
+    //return {{Qt::DisplayRole, "display"}};//m_roleNames;
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -72,3 +78,12 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant::fromValue(m_roleNames[section]);
 }
 
+QVector<QVariantList> TableModel::rows() const
+{
+    return m_rows;
+}
+
+QByteArray TableModel::roles() const
+{
+    return m_roles;
+}

@@ -1,9 +1,7 @@
-import QtQuick 2.15
+import QtQuick 2.15 as Quick
 import QtQuick.Window 2.12
-//import Qt.labs.qmlmodels 1.0
-import TableModel 0.1
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Controls 1.4
+import TableModel 0.1 as Model
+import QtQuick.Controls 1.4 as QuickCont
 
 
 ApplicationWindow {
@@ -11,25 +9,47 @@ ApplicationWindow {
     height: 400
     visible: true
 
-    TableView {
+    Quick.TableView {
         id: _tableView
         anchors.fill: parent
-//        columnSpacing: 1
-//        rowSpacing: 1
+        columnSpacing: 1
+        rowSpacing: 1
 //        boundsBehavior: Flickable.StopAtBounds
-//        columnWidth
-        model: TableModel{}
+//        Quick.Repeater{
+//            model: 3
+//            TableViewColumn {
+//                role: "title"
+//                title: "Title"
+//                width: 100
+//            }
+//        }
 
-        Component.onCompleted: {
-            console.log(_tableView.columnCount)
-        }
+        model: Model.TableModel{}
 
-        headerDelegate: Rectangle {
-            Repeater {
-                model: _tableView.columnCount
-                Text {text: "text"}
+        delegate: Quick.Rectangle{
+            implicitWidth: 50
+            implicitHeight: 50
+            color: "green"
+            Quick.Text {
+                text: _tableView.model.roles
             }
         }
+
+        //        Component.onCompleted: {
+        //            console.log(columnCount)
+        //        }
+
+//        rowDelegate: Rectangle {
+//            Text {
+//                text: "fdsahjks"
+//            }
+//        }
+//        headerDelegate: Rectangle {
+//            Repeater {
+//                model: model.columnCount()
+//                Text {text: "text"}
+//            }
+//        }
 //        delegate: Rectangle{
 //            implicitWidth: 50
 //            implicitHeight: 50
