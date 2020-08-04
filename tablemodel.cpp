@@ -16,7 +16,7 @@ TableModel::TableModel(QObject *parent) :
     {
          qDebug() << "data " << query.value(1).toString();
          // m_roleNames.insert((Qt::UserRole + i),  query.value(1).toByteArray());
-         m_roles += query.value(1).toByteArray();
+         m_roles.push_back(query.value(1).toByteArray());
          m_roleNames[Qt::UserRole + i] = query.value(1).toByteArray();
          qDebug() << "m_roleNames " << m_roleNames[Qt::UserRole + i];
          qDebug() << "m_roles " << m_roles;
@@ -83,7 +83,7 @@ QVector<QVariantList> TableModel::rows() const
     return m_rows;
 }
 
-QByteArray TableModel::roles() const
+QVector<QByteArray> TableModel::roles() const
 {
     return m_roles;
 }

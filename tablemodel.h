@@ -8,7 +8,8 @@
 class TableModel : public QAbstractTableModel
 {
     Q_OBJECT
-    Q_PROPERTY(QByteArray roles READ roles CONSTANT)
+    Q_PROPERTY(QVector<QByteArray> roles READ roles CONSTANT)
+    Q_PROPERTY(QVector<QVariantList> rows READ rows CONSTANT)
 public:
     explicit TableModel(QObject* parent = nullptr);
 
@@ -20,7 +21,7 @@ public:
 
     QVector<QVariantList> rows() const;
 
-    QByteArray roles() const;
+    QVector<QByteArray> roles() const;
 
 private:
     DBManager& m_DBManager;
@@ -28,5 +29,5 @@ private:
     int m_columnCount;
     QHash<int, QByteArray> m_roleNames;
     QVector<QVariantList> m_rows;
-    QByteArray m_roles;
+    QVector<QByteArray> m_roles;
 };
