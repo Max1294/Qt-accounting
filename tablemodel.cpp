@@ -61,7 +61,7 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole) return QString("moc data");
 
-    return QVariant::fromValue(m_rows[role]);
+    return QVariant::fromValue(m_rows[index.row()][index.column()]);
 }
 
 QHash<int, QByteArray> TableModel::roleNames() const
