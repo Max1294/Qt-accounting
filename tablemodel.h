@@ -28,7 +28,7 @@ private:
     DBManager& m_DBManager;
     int m_rowCount;
     int m_columnCount;
-    QHash<int, QByteArray> m_roleNames;
+    QHash<int, QByteArray> m_roleNames; // QVector<QHash<int, QByteArray>> ??
     QVector<QVariantList> m_rows;
     QVector<QByteArray> m_roles;
 };

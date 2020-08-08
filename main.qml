@@ -14,7 +14,7 @@ QuickCont.ApplicationWindow {
     Quick.Component
     {
         id: columnComponent
-        QuickCont.TableViewColumn{width: 200} // set width
+        QuickCont.TableViewColumn{width: _tableView.width / _tableView.model.columnCount()} // set width
     }
 
     QuickCont.TableView {
@@ -22,7 +22,6 @@ QuickCont.ApplicationWindow {
         anchors.fill: parent
 //        backgroundVisible: false
 //        sortIndicatorVisible: true
-
         resources: {
             var roleList = _tableView.model.roles
             var temp = []
@@ -37,108 +36,92 @@ QuickCont.ApplicationWindow {
 
         model: Model.TableModel{}
 
-        itemDelegate: Quick.Text {
-            color: "#9932CC"
-            text: _tableView.model.rows[styleData.row][styleData.column].toString()
-            font.pointSize: 8
-        }
-
-        headerDelegate: Quick.Text {
-            text: styleData.value
-            color: "yellow"
-            font.pointSize: 8
-
-            Connections{
-                target: styleData
-                onContainsMouseChanged: console.log("sdf")
-                //onPressedChanged: _tableView.model.setQuery("SELECT * FROM Contacts WHERE " + _tableView.model.roles[styleData.column] +"='Eric'")
+        itemDelegate: Quick.Rectangle{
+            id: _itemDelegate
+            color: "black"
+            width: _tableView.width / _tableView.model.columnCount()
+            border.width: 1
+            border.color: "green"
+                Quick.Text {
+                color: "white"
+                text: _tableView.model.rows[styleData.row][styleData.column].toString()
+                font.pointSize: 8
+                anchors.centerIn: _itemDelegate
             }
         }
 
-        // TODO
-        style: TableViewStyle {
-//            itemDelegate: Quick.Text {
-//                color: "#9932CC"
-//                text: _tableView.model.rows[styleData.row][styleData.column].toString()
-//                font.pointSize: 8
-//            }
 
-//            headerDelegate: Quick.Text {
-//                text: styleData.value
-//                color: "yellow"
-//                font.pointSize: 8
+        headerDelegate: Quick.Rectangle{
+            id: _headerDelegate
+            border.width: 1
+            border.color: "green"
+            height: 50
+            color: "grey"
+            Quick.Text {
+            text: styleData.value
+            color: "lightblue"
+            font.pointSize: 8
+            anchors.centerIn: _headerDelegate
 
-//                text: styleData.pressed ? "yes" : "no"
-
-//                Quick.MouseArea {
-//                    anchors.fill: parent
-
-//                    hoverEnabled: true
-
-//                    onEntered: {
-//                        if(entered) {
-//                            _headerFlipMenu.popup()
-//                        }
-//                    }
-
-//                    QuickCont.Menu {
-//                        id: _headerFlipMenu
-//                        QuickCont.MenuItem {
-//                            text: qsTr("delete column")
-////                            Action{}
-//                        }
-//                        QuickCont.MenuItem {
-//                            text: qsTr("rename column")
-//                        }
-//                    } // Menu
-//                } // MouseArea
-//            }
-
-            rowDelegate: Quick.Rectangle {
-                id: _rowDeleg
-                color: "lightsteelblue"
-                height: 20
-                Quick.MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.RightButton
-                    hoverEnabled: true
-
-                    // TODO: click -> open options: edir, delete, copy, paste
-                    onClicked: {
-                        if(mouse.button === Qt.RightButton)
-                            _flipMenu.popup()
-                    }
-
-                    onEntered: {
-                        if(entered)
-                            _rowDeleg.color = "green"
-                        console.log(styleData.row)
-                    }
-
-                    onExited: {
-                        if(exited)
-                            _rowDeleg.color = "lightsteelblue"
-                    }
-
-                    QuickCont.Menu {
-                        id: _flipMenu
-                        QuickCont.MenuItem {
-                            text: qsTr("edit")
-//                            Action{}
-                        }
-                        QuickCont.MenuItem {
-                            text: qsTr("copy")
-                        }
-                        QuickCont.MenuItem {
-                            text: qsTr("paste")
-                        }
-                        QuickCont.MenuItem {
-                            text: qsTr("delete")
-                        }
-                    } // Menu
-                } // MouseArea
-            } // rowDelegate: Rectangle
+            Connections{
+                target: styleData
+//                on: console.log("sdf")
+                onPressedChanged: _tableView.model.moveColumn(0, 1)//styleData.value !== _tableView.model.roles[styleData.column] ?
+                                      //console.log("column " + styleData.column) : _tableView.model.setQuery("SELECT * FROM Contacts WHERE " + _tableView.model.roles[styleData.column] +"='Eric'")
+            }
         }
+        }
+
+        rowDelegate: Quick.Rectangle {
+            id: _rowDeleg
+            color: "lightsteelblue"
+            height: 20
+            border.width: 1
+            Quick.MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+                hoverEnabled: true
+
+                // TODO: click -> open options: edir, delete, copy, paste
+                onClicked: {
+                    if(mouse.button === Qt.RightButton)
+                        _flipMenu.popup()
+                }
+
+                onEntered: {
+                    if(entered) {
+                        _rowDeleg.color = "green"
+                    }
+
+
+                    console.log(styleData.row)
+                }
+
+                onExited: {
+                    if(exited)
+                        _rowDeleg.color = "lightsteelblue"
+                }
+
+                QuickCont.Menu {
+                    id: _flipMenu
+                    QuickCont.MenuItem {
+                        text: qsTr("edit")
+//                        Component.completed: {
+//                            console.log(styleData.row + " " + styleData.row)
+//                        }
+
+                    }
+                    QuickCont.MenuItem {
+                        text: qsTr("copy")
+                    }
+                    QuickCont.MenuItem {
+                        text: qsTr("paste")
+                    }
+                    QuickCont.MenuItem {
+                        text: qsTr("delete")
+                    }
+                } // Menu
+            } // MouseArea
+        } // rowDelegate: Rectangle
     }
 }
-
