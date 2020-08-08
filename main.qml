@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import TableModel 0.1 as Model
 import QtQuick.Controls 1.4 as QuickCont
 import QtQuick.Controls.Styles 1.4
+import QtQml 2.15
 
 QuickCont.ApplicationWindow {
     width: 400
@@ -20,7 +21,7 @@ QuickCont.ApplicationWindow {
         id: _tableView
         anchors.fill: parent
 //        backgroundVisible: false
-        sortIndicatorVisible: true
+//        sortIndicatorVisible: true
 
         resources: {
             var roleList = _tableView.model.roles
@@ -36,47 +37,61 @@ QuickCont.ApplicationWindow {
 
         model: Model.TableModel{}
 
+        itemDelegate: Quick.Text {
+            color: "#9932CC"
+            text: _tableView.model.rows[styleData.row][styleData.column].toString()
+            font.pointSize: 8
+        }
+
         headerDelegate: Quick.Text {
             text: styleData.value
             color: "yellow"
-            Quick.MouseArea {
-                anchors.fill: parent
+            font.pointSize: 8
 
-                hoverEnabled: true
-
-                onEntered: {
-                    if(entered){
-                        console.log("done")
-                    }
-                }
+            Connections{
+                target: styleData
+                onContainsMouseChanged: console.log("sdf")
+                //onPressedChanged: _tableView.model.setQuery("SELECT * FROM Contacts WHERE " + _tableView.model.roles[styleData.column] +"='Eric'")
             }
-        }
-
-        itemDelegate: Quick.Text {
-//            selectByMouse: true
-//            overwriteMode: true
-//            selectionColor: "red"
-//            activeFocusOnPress: false
-            color: "#9932CC"
-            text: _tableView.model.rows[styleData.row][styleData.column].toString()
         }
 
         // TODO
         style: TableViewStyle {
-//            itemDelegate: Quick.Rectangle{
-//                id: _itemDelegate
+//            itemDelegate: Quick.Text {
+//                color: "#9932CC"
+//                text: _tableView.model.rows[styleData.row][styleData.column].toString()
+//                font.pointSize: 8
+//            }
+
+//            headerDelegate: Quick.Text {
+//                text: styleData.value
+//                color: "yellow"
+//                font.pointSize: 8
+
+//                text: styleData.pressed ? "yes" : "no"
+
 //                Quick.MouseArea {
 //                    anchors.fill: parent
-//                    acceptedButtons: Qt.LeftButton
+
 //                    hoverEnabled: true
 
-//                    onDoubleClicked: {
-//                        if(doubleClicked)
-//                        {
-//                            console.log("double clicked")
+//                    onEntered: {
+//                        if(entered) {
+//                            _headerFlipMenu.popup()
 //                        }
 //                    }
-//                }
+
+//                    QuickCont.Menu {
+//                        id: _headerFlipMenu
+//                        QuickCont.MenuItem {
+//                            text: qsTr("delete column")
+////                            Action{}
+//                        }
+//                        QuickCont.MenuItem {
+//                            text: qsTr("rename column")
+//                        }
+//                    } // Menu
+//                } // MouseArea
 //            }
 
             rowDelegate: Quick.Rectangle {
@@ -126,3 +141,4 @@ QuickCont.ApplicationWindow {
         }
     }
 }
+

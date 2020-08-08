@@ -87,3 +87,14 @@ QVector<QByteArray> TableModel::roles() const
 {
     return m_roles;
 }
+
+void TableModel::setQuery(QString queryText)
+{
+    QSqlQuery query = m_DBManager.query();
+    query.exec(queryText);
+    while(query.next()) {
+        qDebug() << query.value(0).toString() << " " << query.value(1).toString() << " " << query.value(2).toString();
+
+    }
+
+}

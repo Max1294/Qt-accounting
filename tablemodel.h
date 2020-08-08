@@ -20,8 +20,9 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     QVector<QVariantList> rows() const;
-
     QVector<QByteArray> roles() const;
+
+    Q_INVOKABLE void setQuery(QString queryText);
 
 private:
     DBManager& m_DBManager;
