@@ -1,97 +1,133 @@
-import QtQuick 2.0
-
+import QtQuick 2.15 as Quick
+import QtQuick.Window 2.12
+import QtQuick.Controls 2.15
+import TableModel 1.0 as DBModel
+import QtQuick.Controls 1.4 as QuickCont
 import QtQuick.Controls.Styles 1.4
-import QtQuick 2.12
-import TableModel 0.1
-import QtQuick.Controls 1.4
 
-TableView {
+
+QuickCont.TableView {
+    id: _tableView
     anchors.fill: _tab1
-    TableViewColumn {
-        role: "title"
-        title: "Title"
-        width: _tab1.width / 2
+    sortIndicatorVisible: true
+    sortIndicatorOrder: Qt.DescendingOrder
+    sortIndicatorColumn: 1
+
+    Quick.Component
+    {
+        id: columnComponent
+        QuickCont.TableViewColumn{width: _tableView.width / _tableView.model.columnCount();}
     }
-    TableViewColumn {
-        role: "author"
-        title: "Author"
-        width: _tab1.width / 2
+
+    resources: {
+        var roleList = _tableView.model.roles
+        var temp = []
+
+        for(var i=0; i<roleList.length; i++)
+        {
+            var role  = roleList[i]
+            temp.push(columnComponent.createObject(_tableView, {"title": role, "title": _tableView.model.roles[i]}))
+        }
+
+        return temp
     }
 
-    ListModel {
-        id: libraryModel
-        ListElement {
-            title: "A Masterpiece"
-            author: "Gabriel"
-        }
-        ListElement {
-            title: "Brilliance"
-            author: "Jens"
-        }
-        ListElement {
-            title: "Outstanding"
-            author: "Frederik"
-        }
-    } // ListModel
+    model: DBModel.DatabaseModel{}
 
-    alternatingRowColors: false
-    model: libraryModel
-    backgroundVisible: false
+    itemDelegate: Quick.Rectangle{
+        property var index: [-1, -1]
+        property string text: ""
 
-    style: TableViewStyle {
-        // TODO: centerIn, backgroundColor
-        headerDelegate: Text {
-            text: styleData.value
-            color: "green"
+        id: _itemDelegate
+        color: "black"
+        width: _tableView.width / _tableView.model.columnCount()
+        border.width: 1
+        border.color: "green"
+            Quick.TextEdit {
+                function foo(string) {
+                    console.log("str " + string)
+                    return string
+                }
+
+            id: _edit
+            color: "white"
+            text: _tableView.model.rows[styleData.row][styleData.column].toString()
             font.pointSize: 8
-        } // headerDelegate
+            anchors.centerIn: _itemDelegate
 
-        itemDelegate: Text {
+            onContentSizeChanged: {
+                index = [styleData.row, styleData.column]
+                text = _edit.text
+            }
+
+            onActiveFocusChanged: {
+                foo(text)
+                _tableView.model.updateData(index[0], index[1], text)
+            }
+
+        }
+    }
+
+    headerDelegate: Quick.Rectangle{
+        id: _headerDelegate
+        border.width: 1
+        border.color: "green"
+        height: 100
+        color: "grey"
+
+        Quick.Text {
             text: styleData.value
-            color: "black"
+            color: "lightblue"
             font.pointSize: 8
-        } // itemDelegate: Text
+            anchors.centerIn: _headerDelegate
+        } // Text
+    }
 
-        rowDelegate: Rectangle {
-            id: _rowDeleg
-            color: "lightsteelblue"
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.RightButton
-                hoverEnabled: true
+    rowDelegate: Quick.Rectangle {
+        id: _rowDeleg
+        color: "lightsteelblue"
+        height: 30
+        border.width: 1
+        Quick.MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+            hoverEnabled: true
 
-                // TODO: click -> open options: edir, delete, copy, paste
-                onClicked: {
-                    if(mouse.button === Qt.RightButton)
-                        _flipMenu.popup()
+            // TODO: click -> open options: edir, delete, copy, paste
+            onClicked: {
+                if(mouse.button === Qt.RightButton)
+                    _flipMenu.popup()
+            }
+
+            onEntered: {
+                if(entered) {
+                    _rowDeleg.color = "green"
                 }
 
-                onEntered: {
-                    if(entered)
-                        _rowDeleg.color = "green"
-                }
 
-                onExited: {
-                    if(exited)
-                        _rowDeleg.color = "lightsteelblue"
-                }
+                console.log(styleData.row)
+            }
 
-                Menu {
-                    id: _flipMenu
-                    MenuItem {
-                        text: qsTr("edit")
-                    }
-                    MenuItem {
-                        text: qsTr("copy")
-                    }
-                    MenuItem {
-                        text: qsTr("paste")
-                    }
-                    MenuItem {
-                        text: qsTr("delete")
-                    }
-                } // Menu
-            } // MouseArea
-        } // rowDelegate: Rectangle
-    } // TableViewStyle
+            onExited: {
+                if(exited)
+                    _rowDeleg.color = "lightsteelblue"
+            }
+
+            QuickCont.Menu {
+                id: _flipMenu
+                QuickCont.MenuItem {
+                    text: qsTr("edit row")
+                }
+                QuickCont.MenuItem {
+                    text: qsTr("copy row")
+                }
+                QuickCont.MenuItem {
+                    text: qsTr("replace row")
+                }
+                QuickCont.MenuItem {
+                    text: qsTr("delete row")
+                }
+            } // Menu
+        } // MouseArea
+    } // rowDelegate: Rectangle
 } // TableView
