@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 #include "dbmanager.h"
 #include <QVector>
+#include <QMimeData>
 
 class TableModel : public QAbstractTableModel
 {
@@ -22,8 +23,14 @@ public:
     QVector<QVariantList> rows() const;
     QVector<QByteArray> roles() const;
 
-    Q_INVOKABLE void setQuery(QString queryText);
+    void SetData(int row, int column, QString data);
+    void AddColumn(QString columnName);
+    void addRow(); // add params
+    QString changeTable(QString tableName);
 
+
+    Q_INVOKABLE void updateData(const int row, const int column, QString newdata);
+    Q_INVOKABLE void sortConditions(int column, QVariant conditions...);
 private:
     DBManager& m_DBManager;
     int m_rowCount;

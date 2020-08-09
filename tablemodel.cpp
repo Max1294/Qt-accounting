@@ -1,6 +1,6 @@
 #include "tablemodel.h"
 #include <QDebug>
-
+#include <QSqlError>
 TableModel::TableModel(QObject *parent) :
     m_DBManager{DBManager::instance()}
 {
@@ -88,13 +88,27 @@ QVector<QByteArray> TableModel::roles() const
     return m_roles;
 }
 
-void TableModel::setQuery(QString queryText)
+void TableModel::updateData(const int row, const int column, QString newdata)
 {
-    QSqlQuery query = m_DBManager.query();
-    query.exec(queryText);
-    while(query.next()) {
-        qDebug() << query.value(0).toString() << " " << query.value(1).toString() << " " << query.value(2).toString();
+    std::string queryText = "UPDATE Contacts SET " + m_roles[column].toStdString() + "='" + newdata.toStdString() + "'" + " WHERE " + m_roles[column].toStdString() + "='" + m_rows[row][column].toString().toStdString() + "'";
 
-    }
+    auto query = m_DBManager.query();
 
+    qDebug() <<  "query " << QString::fromUtf8(queryText.c_str());
+//              << " status " << query.prepare(QString::fromUtf8(queryText.c_str()))
+//              << "error " << query.lastError().text();
+    m_DBManager.query().exec(QString::fromUtf8(queryText.c_str()));
+}
+
+void TableModel::sortConditions(int column, QVariant conditions...)
+{
+    if(conditions.Size > 2 || conditions.Size == 0) return;
+
+    auto query = m_DBManager.query();
+
+    QString queryText = "SELECT " + QString::fromUtf8(m_roles[column].toStdString().c_str()) + " FROM Contacts WHERE "
+            + (conditions.Size == 1 ? QVariant::fromValue(conditions).toString()
+                                    : QVariant::fromValue(conditions).toString() + " AND " + QVariant::fromValue(conditions).toString());
+
+    qDebug() << "sort execute " << query.exec(queryText);
 }
