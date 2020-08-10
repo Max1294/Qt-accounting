@@ -4,6 +4,8 @@
 TableModel::TableModel(QObject *parent) :
     m_DBManager{DBManager::instance()}
 {
+    // ATTACH '/home/drago/.local/share/Application/TestDB' AS my_db;
+    // SELECT name FROM my_db.sqlite_master WHERE type='table'; // all tables from db
     Q_UNUSED(parent)
     m_DBManager.OpenDatabase("TestDB");
     QSqlQuery query = m_DBManager.query();
@@ -98,6 +100,7 @@ void TableModel::updateData(const int row, const int column, QString newdata)
 //              << " status " << query.prepare(QString::fromUtf8(queryText.c_str()))
 //              << "error " << query.lastError().text();
     m_DBManager.query().exec(QString::fromUtf8(queryText.c_str()));
+    m_rows[row][column] = QVariant(newdata);
 }
 
 void TableModel::sortConditions(int column, QVariant conditions...)

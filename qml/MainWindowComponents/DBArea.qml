@@ -5,7 +5,6 @@ import TableModel 1.0 as DBModel
 import QtQuick.Controls 1.4 as QuickCont
 import QtQuick.Controls.Styles 1.4
 
-
 QuickCont.TableView {
     id: _tableView
     anchors.fill: _tab1
@@ -55,16 +54,17 @@ QuickCont.TableView {
             font.pointSize: 8
             anchors.centerIn: _itemDelegate
 
-            onContentSizeChanged: {
+              onEditingFinished: {
                 index = [styleData.row, styleData.column]
-                text = _edit.text
-            }
+                if(_tableView.model.rows[index[0]][index[1]] !== _edit.text)
+                {
+                    console.log("Update " + index)
+                     _tableView.model.updateData(index[0], index[1], text)
+                }
 
-            onActiveFocusChanged: {
-                foo(text)
-                _tableView.model.updateData(index[0], index[1], text)
+                console.log("YE$S " + index + " model text " + _tableView.model.rows[index[0]][index[1]]
+                            + " text " + _edit.text)
             }
-
         }
     }
 
@@ -95,26 +95,15 @@ QuickCont.TableView {
 
             // TODO: click -> open options: edir, delete, copy, paste
             onClicked: {
-                if(mouse.button === Qt.RightButton)
+                if(mouse.button === Qt.RightButton){
                     _flipMenu.popup()
-            }
-
-            onEntered: {
-                if(entered) {
-                    _rowDeleg.color = "green"
+                    console.log(styleData.row)
                 }
-
-
-                console.log(styleData.row)
-            }
-
-            onExited: {
-                if(exited)
-                    _rowDeleg.color = "lightsteelblue"
             }
 
             QuickCont.Menu {
                 id: _flipMenu
+
                 QuickCont.MenuItem {
                     text: qsTr("edit row")
                 }

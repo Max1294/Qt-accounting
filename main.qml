@@ -3,7 +3,7 @@ import QtQuick.Window 2.15
 import QtQuick.Controls 1.4
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
-
+import QtQuick.Controls 2.15
 import MainWindowComponents 1.0
 
 ApplicationWindow {
