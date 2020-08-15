@@ -27,29 +27,46 @@ SplitView {
                     id: _tabView
                     width: _root.width - _parentItem.width
                     height: _root.height - _menuBar.height
+                    resources: {
+                        for(var i = count; i < 2; i++)
+                        {
+                            _tabView.addTab("title_"+i, columnComponent)
+                        }
+                    }
 
-                    Tab {
-                        id: _tab1
-                        width: _tabView.width
-                        height: _tabView.height
-                        title: "tab_1"
+                    Component
+                        {
+                            id: columnComponent
+                            Tab {
+    //                                id: _tab1
+                                width: _tabView.width
+                                height: _tabView.height
+                                title: "tab_1"
+                            } // Tab
+                        }
 
-                        DBArea {
-                            anchors.fill: _tab1
-                        } // DBArea
+//                    Tab {
+//                        id: _tab1
+//                        width: _tabView.width
+//                        height: _tabView.height
+//                        title: "tab_1"
 
-                    } // Tab
+//                        DBArea {
+//                            anchors.fill: _tab1
+//                        } // DBArea
 
-                    Tab {
-                        id: _tab2
-                        title: "tab_2"
+//                    } // Tab
 
-                        Rectangle {
-                            width: _tab2.width
-                            height: _tab2.height
-                            color: "green"
-                        } // Rectangle
-                    } // Tab
+//                    Tab {
+//                        id: _tab2
+//                        title: "tab_2"
+
+//                        Rectangle {
+//                            width: _tab2.width
+//                            height: _tab2.height
+//                            color: "green"
+//                        } // Rectangle
+//                    } // Tab
                 } // TabView
             } // Repeater
          } // Column

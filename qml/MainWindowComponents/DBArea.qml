@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.4
 
 QuickCont.TableView {
     id: _tableView
-    anchors.fill: _tab1
+//    anchors.fill: _tab1
     sortIndicatorVisible: true
     sortIndicatorOrder: Qt.DescendingOrder
     sortIndicatorColumn: 1
