@@ -27,8 +27,10 @@ TreeView {
         id: control
         text: styleData.value
         indicator.scale: 0.5
-//        indicator.height: 12
-//        indicator.width: 12
-//        scale: 0.6
+
+        onCheckStateChanged: {
+            console.log("selected " + styleData.row)
+        }
+
     }
 }
