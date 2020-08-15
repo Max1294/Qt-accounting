@@ -22,15 +22,18 @@ TreeView {
         color: "black"
     }
 
-
     itemDelegate: CheckBox {
         id: control
-        text: styleData.value
         indicator.scale: 0.5
 
-        onCheckStateChanged: {
-            console.log("selected " + styleData.row)
+        contentItem: Text{
+            anchors.fill: parent
+            text: styleData.value
+            color: "yellow"
         }
 
+        onCheckStateChanged: {
+            console.log("selected " + styleData.row + " status " + checked)
+        }
     }
 }
