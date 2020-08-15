@@ -27,46 +27,23 @@ SplitView {
                     id: _tabView
                     width: _root.width - _parentItem.width
                     height: _root.height - _menuBar.height
-                    resources: {
-                        for(var i = count; i < 2; i++)
-                        {
-                            _tabView.addTab("title_"+i, columnComponent)
+
+                    Component.onCompleted: {
+                        loadTab()
+                        loadTab()
+                        loadTab()
+                    }
+
+                    Component{
+                        id: _tab
+                        DBArea{
+                            anchors.fill:parent
                         }
                     }
 
-                    Component
-                        {
-                            id: columnComponent
-                            Tab {
-    //                                id: _tab1
-                                width: _tabView.width
-                                height: _tabView.height
-                                title: "tab_1"
-                            } // Tab
-                        }
-
-//                    Tab {
-//                        id: _tab1
-//                        width: _tabView.width
-//                        height: _tabView.height
-//                        title: "tab_1"
-
-//                        DBArea {
-//                            anchors.fill: _tab1
-//                        } // DBArea
-
-//                    } // Tab
-
-//                    Tab {
-//                        id: _tab2
-//                        title: "tab_2"
-
-//                        Rectangle {
-//                            width: _tab2.width
-//                            height: _tab2.height
-//                            color: "green"
-//                        } // Rectangle
-//                    } // Tab
+                    function loadTab(){
+                        _tabView.addTab("title", _tab)
+                    }
                 } // TabView
             } // Repeater
          } // Column

@@ -15,62 +15,14 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
-    TabView
-    {
-        function add() {
-            var tab = _tabView.addTab("title", columnComponent)
-            console.log("index " + currentIndex)
-        }
-
-        id: _tabView
+    MainArea {
+        anchors.top: _menuBar.bottom
         anchors.fill: parent
-
-        style: TabViewStyle{
-            tabsMovable: true
-        }
-
-                            Tab {
-                                id: _tab1
-                                width: _tabView.width
-                                height: _tabView.height
-                                title: "tab_1"
-
-                                DBArea {
-                                    anchors.fill: _tab1
-                                } // DBArea
-
-                            } // Tab
-
-
-        Component
-            {
-                id: columnComponent
-                Tab {
-//                    width: _tabView.width
-//                    height: _tabView.height
-                    title: "tab_1"
-                                            DBArea {
-                                                width: 300
-                                                height: 300
-                                            } // DBArea
-                } // Tab
-            }
-
-        Component.onCompleted: {
-            add()
-            add()
-        }
     }
 
-
-//    MainArea {
-//        anchors.top: _menuBar.bottom
-//        anchors.fill: parent
-//    }
-
-//    menuBar: MenuBarArea {
-//        id: _menuBar
-//        width: _root.width
-//        height: Math.min(40, _root.height)
-//    }
+    menuBar: MenuBarArea {
+        id: _menuBar
+        width: _root.width
+        height: Math.min(40, _root.height)
+    }
 }
