@@ -13,6 +13,7 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
+
     MainArea {
         anchors.top: _menuBar.bottom
         anchors.fill: parent
