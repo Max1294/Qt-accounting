@@ -25,7 +25,7 @@ TreeView {
     itemDelegate: CheckBox {
         id: control
         indicator.scale: 0.5
-
+        checked: true
         contentItem: Text{
             anchors.fill: parent
             text: styleData.value
