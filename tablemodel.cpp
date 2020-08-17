@@ -46,7 +46,7 @@ TableModel::TableModel(QObject *parent) :
 
 int TableModel::rowCount(const QModelIndex &) const
 {
-    return m_rowCount;
+    return m_rowCount + 1;
 }
 
 int TableModel::columnCount(const QModelIndex &) const

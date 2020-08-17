@@ -17,8 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         dbmanager.cpp \
         main.cpp \
-        tablemodel.cpp \
-        treeviewmodel.cpp
+        tablemodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -37,5 +36,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     dbmanager.h \
     function.h \
-    tablemodel.h \
-    treeviewmodel.h
+    tablemodel.h
