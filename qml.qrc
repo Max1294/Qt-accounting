@@ -4,7 +4,6 @@
         <file>qml/MainWindowComponents/qmldir</file>
         <file>qml/MainWindowComponents/DBArea.qml</file>
         <file>qml/MainWindowComponents/MenuBarArea.qml</file>
-        <file>qml/MainWindowComponents/DBInfoArea.qml</file>
         <file>qml/MainWindowComponents/MainArea.qml</file>
     </qresource>
 </RCC>
