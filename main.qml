@@ -32,10 +32,10 @@ ApplicationWindow {
             color: index % _tableView.rows === 0 ? "lightblue" : "green"
             Text {
                 anchors.centerIn: _delegate
-                text: _tableView.model.getData(index) //index % _tableView.rows === 0 ? _tableView.getHeaderData(index) : _tableView.getRowData(index)
+                text: _tableView.model.getRoleNames()//_tableView.model.getData(index)
             }
-        }
-    }
+        } // delegate
+    } // TableView
 
 //    MainArea {
 //        anchors.top: _menuBar.bottom

@@ -1,5 +1,6 @@
 #pragma once
 #include <QSqlTableModel>
+#include <QSqlQuery>
 
 class TableModel : public QSqlTableModel
 {
@@ -7,6 +8,15 @@ class TableModel : public QSqlTableModel
 public:
     explicit TableModel(QObject* parent = nullptr);
 
-    Q_INVOKABLE QVariant getData(int index) const;
+//    QHash<int, QByteArray> roleNames() const override;
+//    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+//    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+
+    Q_INVOKABLE QVariant getData(int index) const;
+    Q_INVOKABLE QString getRoleNames() const;
+    void setRoleNames(int tableIndex);
+
+private:
+    mutable QSqlQuery names;
 };
