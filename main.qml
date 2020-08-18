@@ -25,15 +25,6 @@ ApplicationWindow {
 
         model: DatabaseModel{}
 
-        function getRowData(index) {
-            return _tableView.model.getData(Math.floor(index % (_tableView.rows)) - 1, Math.floor(index / (_tableView.rows)))
-        }
-
-        function getHeaderData(index) {
-//            console.log(index)
-            return _tableView.model.roles[Math.floor(index/(_tableView.rows))]
-        }
-
         delegate: Rectangle {
             implicitHeight: 30
             implicitWidth: 200
