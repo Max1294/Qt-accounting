@@ -26,11 +26,11 @@ ApplicationWindow {
         model: DatabaseModel{}
 
         function getRowData(index) {
-            return _tableView.model.rows[Math.floor(index % (_tableView.rows)) - 1][Math.floor(index / (_tableView.rows))].toString()
+            return _tableView.model.getData(Math.floor(index % (_tableView.rows)) - 1, Math.floor(index / (_tableView.rows)))
         }
 
         function getHeaderData(index) {
-            console.log(index)
+//            console.log(index)
             return _tableView.model.roles[Math.floor(index/(_tableView.rows))]
         }
 
@@ -41,7 +41,7 @@ ApplicationWindow {
             color: index % _tableView.rows === 0 ? "lightblue" : "green"
             Text {
                 anchors.centerIn: _delegate
-                text: index % _tableView.rows === 0 ? _tableView.getHeaderData(index) : _tableView.getRowData(index)
+                text: _tableView.model.getData(index) //index % _tableView.rows === 0 ? _tableView.getHeaderData(index) : _tableView.getRowData(index)
             }
         }
     }
