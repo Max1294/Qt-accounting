@@ -9,10 +9,11 @@ import QtQuick 2.15
 
 import QtQuick.Controls.Styles 1.4
 import TableModel 1.0
+
 ApplicationWindow {
     id: _root
     visible: true
-    width: 640
+    width: Math.max(640, _tableView.width)
     height: 480
     title: qsTr("Hello World")
 
@@ -27,14 +28,20 @@ ApplicationWindow {
 
         delegate: Rectangle {
             implicitHeight: 30
-            implicitWidth: 200
+            implicitWidth: _text.contentWidth + 10
             id: _delegate
             color: index % _tableView.rows === 0 ? "lightblue" : "green"
             Text {
+                id: _text
                 anchors.centerIn: _delegate
-                text: _tableView.model.getRoleNames()//_tableView.model.getData(index)
+                text: Name
             }
         } // delegate
+
+        Component.onCompleted:
+        {
+//            console.log(_tableView.model.roles[0].toString())
+        }
     } // TableView
 
 //    MainArea {
