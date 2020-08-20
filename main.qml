@@ -13,45 +13,18 @@ import TableModel 1.0
 ApplicationWindow {
     id: _root
     visible: true
-    width: Math.max(640, _tableView.width)
+    width: 640
     height: 480
     title: qsTr("Hello World")
 
-    TableView {
-        id: _tableView
+    MainArea {
+        anchors.top: _menuBar.bottom
         anchors.fill: parent
-        columnSpacing: 1
-        rowSpacing: 1
-        interactive : false
+    }
 
-        model: DatabaseModel{}
-
-        delegate: Rectangle {
-            implicitHeight: 30
-            implicitWidth: _text.contentWidth + 10
-            id: _delegate
-            color: index % _tableView.rows === 0 ? "lightblue" : "green"
-            Text {
-                id: _text
-                anchors.centerIn: _delegate
-                text: Name
-            }
-        } // delegate
-
-        Component.onCompleted:
-        {
-//            console.log(_tableView.model.roles[0].toString())
-        }
-    } // TableView
-
-//    MainArea {
-//        anchors.top: _menuBar.bottom
-//        anchors.fill: parent
-//    }
-
-//    menuBar: MenuBarArea {
-//        id: _menuBar
-//        width: _root.width
-//        height: Math.min(40, _root.height)
-//    }
+    menuBar: MenuBarArea {
+        id: _menuBar
+        width: _root.width
+        height: Math.min(40, _root.height)
+    }
 }
