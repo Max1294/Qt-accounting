@@ -3,12 +3,12 @@
 #include <QSqlRecord>
 #include <QSqlQuery>
 
-TableModel* TableModel::model = nullptr;
+int TableModel::connection = 0;
 
 TableModel::TableModel(QObject *parent) :
-    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")}
+    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE", "Connection" + QString::number(TableModel::connection))}
 {
-    if(database().databaseName() == "")
+//    if(TableModel::connection != 1)
     {
         database().setDatabaseName(QString{"/home/drago/Desktop/QtProjects/TestDB"});
 
@@ -21,27 +21,15 @@ TableModel::TableModel(QObject *parent) :
         m_tablesCount = database().tables().size();
         qDebug() << database().databaseName() << " tables count " << m_tablesCount;
 
-        setTable(database().tables()[0]);
+        setTable(database().tables()[TableModel::connection]);
         select();
     }
+
+    qDebug() << "connection " << TableModel::connection;
+    ++TableModel::connection;
 }
 
 int TableModel::tablesCount() const
 {
     return m_tablesCount;
-}
-
-TableModel TableModel::instance()
-{
-    if(model == nullptr)
-    {
-        model = new TableModel();
-    }
-
-    return model;
-}
-
-TableModel::~TableModel()
-{
-    delete model;
 }
