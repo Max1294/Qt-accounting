@@ -10,6 +10,8 @@ public:
     explicit TableModel(QObject* parent = nullptr);
     int tablesCount() const;
 
+    Q_INVOKABLE void resetData();
+
 private:
     int m_tablesCount;
     static int connection;

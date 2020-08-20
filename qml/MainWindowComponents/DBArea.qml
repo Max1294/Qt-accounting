@@ -8,18 +8,27 @@ TableView {
     columnSpacing: 1
     rowSpacing: 1
     interactive : false
-    property alias mainModel: _tableView.model
+
     model: DatabaseModel{}
 
     delegate: Rectangle {
         implicitHeight: 30
-        implicitWidth: _text.contentWidth + 10
+        implicitWidth: Math.max(_text.contentWidth + 10, _tabView.width / columns)
         id: _delegate
         color: "green"
-        Text {
+        TextEdit {
             id: _text
             anchors.centerIn: _delegate
             text: display
+
+            onEditingFinished: {
+                console.log("edited " + _text.text)
+                _tableView.model.resetData()
+            }
         }
-    } // delegate
+
+        Component.onCompleted: {
+            console.log("rows " + _text.contentWidth + 10 + " " + _tabView.width / rows + " res " + Math.max(_text.contentWidth + 10, _tabView.width / rows))
+        }
+    } // Delegate
 } // TableView

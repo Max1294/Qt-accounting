@@ -10,18 +10,13 @@ TabView
         id: _tab
         DBArea{
             id: _tArea
-            width: _tabView.width
-            height: _tabView.height - 30
+            anchors.fill: parent
         }
     } // Component
 
     Component.onCompleted: {
         _tabView.addTab("Contacts", _tab)
         _tabView.addTab("AddressBook", _tab)
-//        for(var i = 0; i < 2; ++i)
-//        {
-//            _tabView.addTab("title", _tab)
-//        }
     }
 
     onCurrentIndexChanged: {
