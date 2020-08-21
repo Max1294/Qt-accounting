@@ -3,14 +3,12 @@
 #include <QSqlRecord>
 #include <QSqlQuery>
 
-int TableModel::connection = 0;
-
 TableModel::TableModel(QObject *parent) :
-    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")} //, "Connection" + QString::number(TableModel::connection))}
+    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")}
 {
     database().setDatabaseName(QString{"/home/drago/Desktop/QtProjects/TestDB"});
 
-    setEditStrategy(QSqlTableModel::OnManualSubmit);//(QSqlTableModel::OnFieldChange);
+    setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     qDebug() << "driver: " << database().isValid();
 
@@ -18,14 +16,19 @@ TableModel::TableModel(QObject *parent) :
         qDebug() << "Error: can not open Database";
     }
 
+    m_tablesName = database().tables();
     m_tablesCount = database().tables().size();
-    qDebug() << database().databaseName() << " tables count " << m_tablesCount;
+    qDebug() << database().databaseName() << " tables count " << m_tablesCount
+             << " tables " << m_tablesName;
 
-//    setTable(database().tables()[tabIndex]);
-//    select();
+    setTable(database().tables()[0]);
+    select();
+}
 
-    qDebug() << "connection " << TableModel::connection;
-    ++TableModel::connection;
+void TableModel::changeTab(int index)
+{
+    setTable(database().tables()[index]);
+    select();
 }
 
 int TableModel::tablesCount() const
@@ -33,23 +36,7 @@ int TableModel::tablesCount() const
     return m_tablesCount;
 }
 
-void TableModel::resetData()
+QStringList TableModel::tablesName() const
 {
-    submitAll();
-}
-
-void TableModel::changeTab(int tabIndex)
-{
-    setTable(database().tables()[tabIndex]);
-    select();
-}
-
-int TableModel::tableIndex() const
-{
-    return m_tableIndex;
-}
-
-void TableModel::setTableIndex(int tableIndex)
-{
-    m_tableIndex = tableIndex;
+    return m_tablesName;
 }

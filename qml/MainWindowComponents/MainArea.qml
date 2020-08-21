@@ -8,8 +8,6 @@ TabView
 {
     id: _tabView
 
-
-
     Component{
         id: _tab
 
