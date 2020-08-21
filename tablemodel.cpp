@@ -22,28 +22,30 @@ TableModel::TableModel(QObject *parent) :
     qDebug() << database().databaseName() << " tables count " << m_tablesCount
              << " tables " << m_tablesName;
 
-    setTable(database().tables()[0]);
-    select();
+    setTab(0);
 }
 
-void TableModel::changeTab(int index)
+void TableModel::setTab(int index)
 {
     setTable(database().tables()[index]);
     select();
 }
 
-void TableModel::editField(const QModelIndex &index, QString data)
+void TableModel::editField(int index, QString data)
 {
-    if (data == record(index.row()).value(index.column())) return;
+    int row = index%rowCount();
+    int column = index/rowCount();
 
-    qDebug() << "edit " << record(index.row()).value(index.column()) << " on " << data;
+    if (data == record(row).value(column)) return;
 
-    auto tempRecord = record(index.row());
-    tempRecord.setValue(index.column(), data);
+    qDebug() << "edit " << record(row).value(column) << " on " << data;
 
-    updateRowInTable(index.row(), tempRecord);
+    auto tempRecord = record(row);
+    tempRecord.setValue(column, data);
 
-    setData(index, data);
+    updateRowInTable(row, tempRecord);
+
+    setData(createIndex(row, column), data);
 
 //    emit dataChanged(createIndex(0, 0),
 //                     createIndex(index .row(), index.column()));

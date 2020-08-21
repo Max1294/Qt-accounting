@@ -11,8 +11,8 @@ class TableModel : public QSqlTableModel
 public:
     explicit TableModel(QObject* parent = nullptr);
 
-    Q_INVOKABLE void changeTab (int index);
-    Q_INVOKABLE void editField(const QModelIndex &index, QString data);
+    Q_INVOKABLE void setTab (int index);
+    Q_INVOKABLE void editField(int index, QString data);
 
     int tablesCount() const;
     QStringList tablesName() const;
