@@ -21,8 +21,8 @@ TableModel::TableModel(QObject *parent) :
     m_tablesCount = database().tables().size();
     qDebug() << database().databaseName() << " tables count " << m_tablesCount;
 
-    setTable(database().tables()[TableModel::connection]);
-    select();
+//    setTable(database().tables()[tabIndex]);
+//    select();
 
     qDebug() << "connection " << TableModel::connection;
     ++TableModel::connection;
@@ -36,4 +36,10 @@ int TableModel::tablesCount() const
 void TableModel::resetData()
 {
     submitAll();
+}
+
+void TableModel::changeTab(int tabIndex)
+{
+    setTable(database().tables()[tabIndex]);
+    select();
 }

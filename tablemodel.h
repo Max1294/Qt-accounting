@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QSqlTableModel>
 #include <QSqlQuery>
 
@@ -11,7 +12,7 @@ public:
     int tablesCount() const;
 
     Q_INVOKABLE void resetData();
-
+    Q_INVOKABLE void changeTab(int tabIndex);
 private:
     int m_tablesCount;
     static int connection;

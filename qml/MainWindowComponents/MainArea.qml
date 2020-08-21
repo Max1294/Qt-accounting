@@ -6,11 +6,21 @@ import QtQuick.Layouts 1.0
 TabView
 {
     id: _tabView
+
+//    DBArea {
+//        id: _tArea
+//        anchors.fill: parent
+//    }
+
+    DBArea {
+        id: _tArea
+        anchors.fill: parent
+    }
+
     Component{
         id: _tab
-        DBArea{
-            id: _tArea
-            anchors.fill: parent
+        Item{
+            visible: false
         }
     } // Component
 

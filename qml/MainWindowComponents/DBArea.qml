@@ -26,9 +26,9 @@ TableView {
                 _tableView.model.resetData()
             }
         }
-
-        Component.onCompleted: {
-            console.log("rows " + _text.contentWidth + 10 + " " + _tabView.width / rows + " res " + Math.max(_text.contentWidth + 10, _tabView.width / rows))
-        }
     } // Delegate
+
+    Component.onCompleted: {
+         _tableView.model.changeTab(currentIndex);
+    }
 } // TableView
