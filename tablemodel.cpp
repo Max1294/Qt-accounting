@@ -14,12 +14,22 @@ TableModel::TableModel(QObject *parent) :
         qDebug() << "Error: can not open Database";
     }
 
+    setHeaderData(0, Qt::Horizontal, "Name");
+    setHeaderData(1, Qt::Horizontal, "Surname");
+    setHeaderData(2, Qt::Horizontal, "Number");
+
     m_tablesName = database().tables();
     m_tablesCount = database().tables().size();
     qDebug() << database().databaseName() << " tables count " << m_tablesCount
              << " tables " << m_tablesName;
 
     setTab(TableModel::defaultTab);
+
+    auto tmp = roleNames();
+    for(auto& role : tmp)
+    {
+        qDebug() << "role " << role;
+    }
 }
 
 void TableModel::setTab(int index)
