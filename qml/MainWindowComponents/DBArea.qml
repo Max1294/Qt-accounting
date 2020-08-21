@@ -4,12 +4,15 @@ import QtQuick.Controls 2.15
 import TableModel 1.0
 
 TableView {
+    property alias _view: _tableView
     id: _tableView
     columnSpacing: 1
     rowSpacing: 1
     interactive : false
 
-    model: DatabaseModel{}
+    model: DatabaseModel{
+        tableIndex: currentIndex
+    }
 
     delegate: Rectangle {
         implicitHeight: 30
@@ -23,12 +26,13 @@ TableView {
 
             onEditingFinished: {
                 console.log("edited " + _text.text)
-                _tableView.model.resetData()
+//                _tableView.model.resetData()
             }
         }
     } // Delegate
 
     Component.onCompleted: {
+        console.log("edited " + rows)
          _tableView.model.changeTab(currentIndex);
     }
 } // TableView

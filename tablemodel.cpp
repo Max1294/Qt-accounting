@@ -6,7 +6,7 @@
 int TableModel::connection = 0;
 
 TableModel::TableModel(QObject *parent) :
-    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE", "Connection" + QString::number(TableModel::connection))}
+    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")} //, "Connection" + QString::number(TableModel::connection))}
 {
     database().setDatabaseName(QString{"/home/drago/Desktop/QtProjects/TestDB"});
 
@@ -42,4 +42,14 @@ void TableModel::changeTab(int tabIndex)
 {
     setTable(database().tables()[tabIndex]);
     select();
+}
+
+int TableModel::tableIndex() const
+{
+    return m_tableIndex;
+}
+
+void TableModel::setTableIndex(int tableIndex)
+{
+    m_tableIndex = tableIndex;
 }
