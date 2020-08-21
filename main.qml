@@ -28,7 +28,6 @@ ApplicationWindow {
 
         Repeater {
             model: _main.model.tablesName
-
             TabButton {
                 text: modelData
                 width: implicitWidth

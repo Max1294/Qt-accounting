@@ -1,14 +1,11 @@
 #include "tablemodel.h"
 #include <QDebug>
 #include <QSqlRecord>
-#include <QSqlQuery>
-#include <QModelIndex>
 
 TableModel::TableModel(QObject *parent) :
     QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")}
 {
     database().setDatabaseName(QString{"/home/drago/Desktop/QtProjects/TestDB"});
-
     setEditStrategy(QSqlTableModel::OnFieldChange);
 
     qDebug() << "driver: " << database().isValid();
@@ -22,7 +19,7 @@ TableModel::TableModel(QObject *parent) :
     qDebug() << database().databaseName() << " tables count " << m_tablesCount
              << " tables " << m_tablesName;
 
-    setTab(0);
+    setTab(TableModel::defaultTab);
 }
 
 void TableModel::setTab(int index)
@@ -44,7 +41,6 @@ void TableModel::editField(int index, QString data)
     tempRecord.setValue(column, data);
 
     updateRowInTable(row, tempRecord);
-
     setData(createIndex(row, column), data);
 
 //    emit dataChanged(createIndex(0, 0),

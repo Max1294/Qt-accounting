@@ -1,5 +1,4 @@
 #pragma once
-
 #include <QSqlTableModel>
 #include <QSqlQuery>
 
@@ -20,4 +19,5 @@ public:
 private:
     int m_tablesCount;
     QStringList m_tablesName;
+    static constexpr int defaultTab{0};
 };
