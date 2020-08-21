@@ -22,8 +22,7 @@ ApplicationWindow {
         height: Math.min(40, _root.height)
     }
 
-    footer: TabBar{
-
+    footer: TabBar {
         id: _tabBar
         width: _root.width
 

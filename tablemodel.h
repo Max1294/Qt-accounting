@@ -10,7 +10,9 @@ class TableModel : public QSqlTableModel
     Q_PROPERTY(QStringList tablesName READ tablesName CONSTANT)
 public:
     explicit TableModel(QObject* parent = nullptr);
+
     Q_INVOKABLE void changeTab (int index);
+    Q_INVOKABLE void editField(const QModelIndex &index, QString data);
 
     int tablesCount() const;
     QStringList tablesName() const;

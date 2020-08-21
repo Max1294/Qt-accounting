@@ -7,9 +7,7 @@ TableView {
     rowSpacing: 1
     interactive : false
 
-    model: DatabaseModel{
-//        tableIndex: currentIndex
-    }
+    model: DatabaseModel{}
 
     delegate: Rectangle {
         implicitHeight: 30
@@ -22,12 +20,9 @@ TableView {
             text: display
 
             onEditingFinished: {
+                _tableView.model.editField(index, _text.text)
                 console.log("edited " + _text.text)
             }
-        }
+        } // TextEdit
     } // Delegate
-
-    Component.onCompleted: {
-        console.log("rows " + rows)
-    }
 } // TableView
