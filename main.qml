@@ -34,6 +34,8 @@ ApplicationWindow {
 //        }
 //    }
 
+
+
     DBArea {
         id: _main
         anchors.top: _menuBar.bottom

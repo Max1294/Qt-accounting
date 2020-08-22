@@ -19,7 +19,7 @@ Rectangle {
 
         delegate: Rectangle {
             id: _verticalHeaderDelegate
-            implicitHeight: index === 0 ? 50 : 30
+            implicitHeight: index === 0 ? 81 : 30
             implicitWidth: 30
             color: "lightblue"
 
@@ -36,32 +36,44 @@ Rectangle {
         implicitWidth: _root.width
         height: 50
         syncView: _tableView
+//        model: 3
         interactive : false
         columnSpacing: 1
+        rowSpacing: 1
 
-        delegate: Rectangle{
-            id: _horizontalHeaderDelegate
-            implicitHeight: _horizontalHeader.height
-            implicitWidth: Math.max(_horizontalHeaderText.contentWidth + 10, _tableView.width / _tableView.columns)
-            color: "lightblue"
-            Text {
-                id: _horizontalHeaderText
-                text: display
-                anchors.centerIn: _horizontalHeaderDelegate
-            }
-
-            MouseArea {
-                id: _headerMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-
-                onClicked: {
-                    if(mouse.button === Qt.LeftButton)
-                    {
-                        _tableView.model.sortColumn(index)
-                    }
+        delegate: Column {
+            spacing: 1
+            Rectangle {
+                id: _horizontalHeaderDelegate
+                implicitHeight: _horizontalHeader.height
+                implicitWidth: Math.max(_horizontalHeaderText.contentWidth + 10, _tableView.width / _tableView.columns)
+                color: "lightblue"
+                Text {
+                    id: _horizontalHeaderText
+                    text: display
+                    anchors.centerIn: _horizontalHeaderDelegate
                 }
-            } // MouseArea
+
+                MouseArea {
+                    id: _headerMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    onClicked: {
+                        if(mouse.button === Qt.LeftButton)
+                        {
+                            _tableView.model.sortColumn(index)
+                        }
+                    }
+                } // MouseArea
+            } // Rectangle
+
+            TextArea {
+                implicitHeight: 30
+                implicitWidth: _horizontalHeaderDelegate.implicitWidth
+                background: Rectangle {color: "yellow"}
+                placeholderText: "filter"
+            } // TextArea
         } // delegate
     } // HorizontalHeaderView
 
@@ -71,7 +83,7 @@ Rectangle {
         height: _root.height - 50
         anchors.top: _horizontalHeader.bottom
         anchors.left: _verticalHeader.right
-        anchors.topMargin: 1
+        anchors.topMargin: 32
         anchors.leftMargin: 1
         columnSpacing: 1
         rowSpacing: 1
