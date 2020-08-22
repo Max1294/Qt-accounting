@@ -27,11 +27,21 @@ ApplicationWindow {
         width: _root.width
 
         Repeater {
+            id: _repeater
             model: _main._model.tablesName
             TabButton {
                 text: modelData
                 width: implicitWidth
+
+                background: Rectangle {
+                    id: _tabBachground
+                    color: "#469c9b"
+                }
             }
+        }
+
+        background: Rectangle {
+            color: "grey"
         }
 
         onCurrentIndexChanged: {
