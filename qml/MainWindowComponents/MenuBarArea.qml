@@ -16,6 +16,13 @@ MenuBar {
         Action {text: qsTr("Export database")}
     }
     Menu {
+        title: qsTr("&Actions")
+        Action {text: "Set filter"}
+        MenuSeparator { }
+        Action {text: "Add row"}
+        Action {text: "Add column"}
+    }
+    Menu {
         title: qsTr("&Help")
     }
 }

@@ -65,7 +65,7 @@ void TableModel::sortColumn(int column, QString filter)
 
     if(filter == "")
     {
-        setFilter("1=1 ORDER BY " + columnName + " " + order[sortDirection]);
+        setFilter("1=1 ORDER BY " + columnName + " " + order[sortDirection]); // + ", Surname ASC, Number ASC");
 
         qDebug() << "query " << "SELECT * FROM " + database().tables()[m_currentTab] + " ORDER BY " + columnName + " " + order[sortDirection];
         sortDirection = !sortDirection;

@@ -9,6 +9,31 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
+//    Loader {
+//        id: _loader
+//        anchors.fill: parent
+
+//        Component.onCompleted: setSource("DBArea.qml", {"id": _main,
+//                                             "anchors.top": _menuBar.bottom,
+//                                             "anchors.bottom": _tabBar.top,
+//                                             "anchors.fill": parent})
+//        //        source: qsTr("qrc:/qml/MainWindowComponents/DBArea.qml")
+//    }
+
+//    MouseArea {
+//        anchors.fill: parent
+
+//        onClicked: {
+//            if(clicked) {
+//                _loader.setSource("qrc:/qml/MainWindowComponents/DBArea.qml",
+//                                      {"id": _main,
+//                                      "anchors.top": _menuBar.bottom,
+//                                      "anchors.bottom": _tabBar.top,
+//                                      "anchors.fill": parent})
+//            }
+//        }
+//    }
+
     DBArea {
         id: _main
         anchors.top: _menuBar.bottom
