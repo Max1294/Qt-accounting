@@ -34,7 +34,7 @@ ApplicationWindow {
 //        }
 //    }
 
-
+    // TODO: Load DBArea after db is available
 
     DBArea {
         id: _main

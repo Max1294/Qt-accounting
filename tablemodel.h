@@ -26,4 +26,6 @@ private:
     enum SortDirection : bool{
         DOWN = 0, UP
     };
+
+    QString parseFilter(QString filter);
 };

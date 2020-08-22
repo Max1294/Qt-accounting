@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 
 Rectangle {
     id: _root
-    property alias _model:_tableView.model
+    property alias _model: _tableView.model
 
     color: "grey"
 
@@ -36,7 +36,6 @@ Rectangle {
         implicitWidth: _root.width
         height: 50
         syncView: _tableView
-//        model: 3
         interactive : false
         columnSpacing: 1
         rowSpacing: 1
@@ -73,6 +72,10 @@ Rectangle {
                 implicitWidth: _horizontalHeaderDelegate.implicitWidth
                 background: Rectangle {color: "yellow"}
                 placeholderText: "filter"
+
+                onEditingFinished: {
+                    _tableView.model.sortColumn(index, text)
+                }
             } // TextArea
         } // delegate
     } // HorizontalHeaderView

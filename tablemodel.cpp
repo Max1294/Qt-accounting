@@ -65,7 +65,7 @@ void TableModel::sortColumn(int column, QString filter)
 
     if(filter == "")
     {
-        setFilter("1=1 ORDER BY " + columnName + " " + order[sortDirection]); // + ", Surname ASC, Number ASC");
+        setFilter("1=1 ORDER BY " + columnName + " " + order[sortDirection]);
 
         qDebug() << "query " << "SELECT * FROM " + database().tables()[m_currentTab] + " ORDER BY " + columnName + " " + order[sortDirection];
         sortDirection = !sortDirection;
@@ -73,13 +73,10 @@ void TableModel::sortColumn(int column, QString filter)
         return;
     }
 
-//    QString filterText = "";
+    qDebug() << "filter is set";
 
-
-//    qDebug() << "column " << columnName;
-//    setFilter(columnName +  "'Eric'");
-//    orderByClause();
-//    select();
+    // TODO: parse filter and create query
+    // TBD: after filter text shoud be dispalyed
 }
 
 int TableModel::tablesCount() const
@@ -90,4 +87,9 @@ int TableModel::tablesCount() const
 QStringList TableModel::tablesName() const
 {
     return m_tablesName;
+}
+
+QString TableModel::parseFilter(QString filter)
+{
+    return "";
 }
