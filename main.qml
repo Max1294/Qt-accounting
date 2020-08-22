@@ -14,8 +14,6 @@ ApplicationWindow {
         anchors.top: _menuBar.bottom
         anchors.bottom: _tabBar.top
         anchors.fill: parent
-//        width: _root.width
-//        height: _root.height - 100
     }
 
     menuBar: MenuBarArea {
