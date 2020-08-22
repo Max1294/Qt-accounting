@@ -3,7 +3,9 @@
 #include <QSqlRecord>
 
 TableModel::TableModel(QObject *parent) :
-    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")}
+    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")},
+    m_currentTab{0},
+    sortDirection{SortDirection::DOWN}
 {
     database().setDatabaseName(QString{"/home/drago/Desktop/QtProjects/TestDB"});
     setEditStrategy(QSqlTableModel::OnFieldChange);
@@ -19,19 +21,22 @@ TableModel::TableModel(QObject *parent) :
     qDebug() << database().databaseName() << " tables count " << m_tablesCount
              << " tables " << m_tablesName;
 
-    setTab(TableModel::defaultTab);
-
-    auto tmp = roleNames();
-    for(auto& role : tmp)
-    {
-        qDebug() << "role " << role;
-    }
+    setTab(m_currentTab);
 }
 
 void TableModel::setTab(int index)
 {
+    m_currentTab = index;
     setTable(database().tables()[index]);
-    select();
+
+    if(filter() == "")
+    {
+        qDebug() << "filter is empty";
+        select();
+        return;
+    }
+
+    setFilter(filter());
 }
 
 void TableModel::editField(int index, QString data)
@@ -48,9 +53,33 @@ void TableModel::editField(int index, QString data)
 
     updateRowInTable(row, tempRecord);
     setData(createIndex(row, column), data);
+}
 
-//    emit dataChanged(createIndex(0, 0),
-//                     createIndex(index .row(), index.column()));
+void TableModel::sortColumn(int column, QString filter)
+{
+    QString columnName = headerData(column, Qt::Horizontal).toString();
+    QMap<bool, QString> order = {
+        {SortDirection::DOWN, "DESC"},
+        {SortDirection::UP, "ASC"}
+    };
+
+    if(filter == "")
+    {
+        setFilter("1=1 ORDER BY " + columnName + " " + order[sortDirection]);
+
+        qDebug() << "query " << "SELECT * FROM " + database().tables()[m_currentTab] + " ORDER BY " + columnName + " " + order[sortDirection];
+        sortDirection = !sortDirection;
+        qDebug() << "filter() " << QSqlTableModel::filter();
+        return;
+    }
+
+//    QString filterText = "";
+
+
+//    qDebug() << "column " << columnName;
+//    setFilter(columnName +  "'Eric'");
+//    orderByClause();
+//    select();
 }
 
 int TableModel::tablesCount() const

@@ -12,6 +12,7 @@ public:
 
     Q_INVOKABLE void setTab (int index);
     Q_INVOKABLE void editField(int index, QString data);
+    Q_INVOKABLE void sortColumn(int column, QString filter = "");
 
     int tablesCount() const;
     QStringList tablesName() const;
@@ -19,5 +20,10 @@ public:
 private:
     int m_tablesCount;
     QStringList m_tablesName;
-    static constexpr int defaultTab{0};
+    int m_currentTab;
+    bool sortDirection;
+
+    enum SortDirection : bool{
+        DOWN = 0, UP
+    };
 };
