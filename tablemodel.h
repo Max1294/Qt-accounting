@@ -21,11 +21,5 @@ private:
     int m_tablesCount;
     QStringList m_tablesName;
     int m_currentTab;
-    bool sortDirection;
-
-    enum SortDirection : bool{
-        DOWN = 0, UP
-    };
-
-    QString parseFilter(QString filter);
+    Qt::SortOrder sortCondition;
 };

@@ -5,7 +5,7 @@
 TableModel::TableModel(QObject *parent) :
     QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")},
     m_currentTab{0},
-    sortDirection{SortDirection::DOWN}
+    sortCondition{Qt::AscendingOrder}
 {
     database().setDatabaseName(QString{"/home/drago/Desktop/QtProjects/TestDB"});
     setEditStrategy(QSqlTableModel::OnFieldChange);
@@ -35,7 +35,7 @@ void TableModel::setTab(int index)
         select();
         return;
     }
-
+    // TODO: after tab change filtered data shoud be displayed
     setFilter(filter());
 }
 
@@ -58,25 +58,30 @@ void TableModel::editField(int index, QString data)
 void TableModel::sortColumn(int column, QString filter)
 {
     QString columnName = headerData(column, Qt::Horizontal).toString();
-    QMap<bool, QString> order = {
-        {SortDirection::DOWN, "DESC"},
-        {SortDirection::UP, "ASC"}
-    };
 
     if(filter == "")
     {
-        setFilter("1=1 ORDER BY " + columnName + " " + order[sortDirection]);
-
-        qDebug() << "query " << "SELECT * FROM " + database().tables()[m_currentTab] + " ORDER BY " + columnName + " " + order[sortDirection];
-        sortDirection = !sortDirection;
-        qDebug() << "filter() " << QSqlTableModel::filter();
+        sortCondition = sortCondition == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+        setSort(0, sortCondition);
+        select();
         return;
     }
 
-    qDebug() << "filter is set";
+    QRegExp exp("^<=|^>=|^<|^>");
 
-    // TODO: parse filter and create query
-    // TBD: after filter text shoud be dispalyed
+    qDebug() << "reg exp " << exp.indexIn(filter);
+
+    if(int pos = exp.indexIn(filter); pos != -1)
+    {
+        filter.insert(pos+ (filter[pos+1] == '=' ? 2 : 1), "'");
+        filter.insert(filter.size(), "'");
+        exp.setPattern("\\s");
+        filter.replace(exp, "");
+        qDebug() << "filter " << filter;
+        setFilter(columnName + filter);
+    }
+
+    // TODO: after filter text shoud be dispalyed
 }
 
 int TableModel::tablesCount() const
@@ -87,9 +92,4 @@ int TableModel::tablesCount() const
 QStringList TableModel::tablesName() const
 {
     return m_tablesName;
-}
-
-QString TableModel::parseFilter(QString filter)
-{
-    return "";
 }
