@@ -14,7 +14,6 @@ Rectangle {
         height: _root.height
         interactive: false
         rowSpacing: 1
-        //        columnSpacing: 1
 
         model: _tableView.rows + 1
 
@@ -74,11 +73,6 @@ Rectangle {
                 background: Rectangle {color: "yellow"}
                 placeholderText: "filter"
                 text: _tableView.model.tablesFieldsFilter(_horizontalHeaderText.text)
-
-                onEditingFinished: {
-                    _tableView.model.sortColumn(index, text)
-                }
-            } // TextArea
         } // delegate
     } // HorizontalHeaderView
 
