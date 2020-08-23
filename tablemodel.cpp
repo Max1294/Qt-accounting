@@ -16,8 +16,6 @@ TableModel::TableModel(QObject *parent) :
         qDebug() << "Error: can not open Database";
     }
 
-    setTable(database().tables()[m_currentTab]);
-
     m_tablesName = database().tables();
     m_tablesCount = database().tables().size();
     qDebug() << database().databaseName() << " tables count " << m_tablesCount
@@ -28,15 +26,22 @@ TableModel::TableModel(QObject *parent) :
     for(int i = 0; i < m_tablesCount; ++i)
     {
         m_tablesFilter.push_back("");
+        setTable(database().tables()[i]);
+        QHash<QString, QString> tmp;
 
         for(int j = 0; headerData(j, Qt::Horizontal).toString() != QString::number(j+1); ++j)
         {
-            QHash<QString, QString> tmp;
-            tmp[headerData(j, Qt::Horizontal).toString()] = "";
-            m_tablesFieldsFilter.push_back(tmp);
+            tmp.insert(headerData(j, Qt::Horizontal).toString(), "");
         }
+
+        m_tablesFieldsFilter.push_back(tmp);
     }
-    select();
+
+    qDebug() << "size " << m_tablesFieldsFilter.size() << m_tablesFilter.size();
+    for(auto it = m_tablesFieldsFilter.begin(); it != m_tablesFieldsFilter.end(); ++it)
+    {
+        qDebug() << "it " << *it;
+    }
 }
 
 void TableModel::setTab(int index)
@@ -90,8 +95,11 @@ void TableModel::sortColumn(int column, QString filter)
     // TODO: remove filter
     if(m_tablesFieldsFilter[m_currentTab][columnName] != "" && filter == "")
     {
+        qDebug() << "enter";
         m_tablesFieldsFilter[m_currentTab][columnName] = "";
+        setTable(database().tables()[m_currentTab]);
         select();
+        return;
     }
 
     QRegExp exp;
