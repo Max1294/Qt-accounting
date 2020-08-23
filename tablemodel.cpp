@@ -21,7 +21,20 @@ TableModel::TableModel(QObject *parent) :
     qDebug() << database().databaseName() << " tables count " << m_tablesCount
              << " tables " << m_tablesName;
 
+    qDebug() << "test" << headerData(3, Qt::Horizontal);
     setTab(m_currentTab);
+
+    for(int i = 0; i < m_tablesCount; ++i)
+    {
+        m_tablesFilter.push_back("");
+
+        for(int header = 0; headerData(header, Qt::Horizontal).toString() != QString::number(header+1); ++header)
+        {
+            QHash<QString, QString> tmp;
+            tmp[headerData(header, Qt::Horizontal).toString()] = "";
+            m_tablesFieldsFilter.push_back(tmp);
+        }
+    }
 }
 
 void TableModel::setTab(int index)
@@ -58,30 +71,35 @@ void TableModel::editField(int index, QString data)
 void TableModel::sortColumn(int column, QString filter)
 {
     QString columnName = headerData(column, Qt::Horizontal).toString();
+    qDebug() << "fil " << m_tablesFieldsFilter[m_currentTab][columnName];
 
     if(filter == "")
     {
         sortCondition = sortCondition == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
-        setSort(0, sortCondition);
+        setSort(column, sortCondition);
         select();
         return;
     }
 
-    QRegExp exp("^<=|^>=|^<|^>");
+    QRegExp exp("^<=|^>=|^<|^>|^=");
 
     qDebug() << "reg exp " << exp.indexIn(filter);
 
     if(int pos = exp.indexIn(filter); pos != -1)
     {
+        filter = filter.trimmed(); // ???
+        m_tablesFieldsFilter[m_currentTab][columnName] = filter;
         filter.insert(pos+ (filter[pos+1] == '=' ? 2 : 1), "'");
         filter.insert(filter.size(), "'");
         exp.setPattern("\\s");
         filter.replace(exp, "");
         qDebug() << "filter " << filter;
-        setFilter(columnName + filter);
-    }
 
-    // TODO: after filter text shoud be dispalyed
+        m_tablesFilter[m_currentTab] += m_tablesFilter[m_currentTab] == "" ? columnName + filter : " AND " + columnName + filter;
+        qDebug() << m_tablesFilter[m_currentTab];
+
+        setFilter(m_tablesFilter[m_currentTab]);
+    }
 }
 
 int TableModel::tablesCount() const
@@ -92,4 +110,9 @@ int TableModel::tablesCount() const
 QStringList TableModel::tablesName() const
 {
     return m_tablesName;
+}
+
+QString TableModel::tablesFieldsFilter(QString key) const
+{
+    return m_tablesFieldsFilter[m_currentTab][key];
 }

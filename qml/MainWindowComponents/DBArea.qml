@@ -72,6 +72,7 @@ Rectangle {
                 implicitWidth: _horizontalHeaderDelegate.implicitWidth
                 background: Rectangle {color: "yellow"}
                 placeholderText: "filter"
+                text: _tableView.model.tablesFieldsFilter(_horizontalHeaderText.text)
 
                 onEditingFinished: {
                     _tableView.model.sortColumn(index, text)
