@@ -14,6 +14,7 @@ Rectangle {
         height: _root.height
         interactive: false
         rowSpacing: 1
+        //        columnSpacing: 1
 
         model: _tableView.rows + 1
 
@@ -69,7 +70,7 @@ Rectangle {
 
             TextArea {
                 implicitHeight: 30
-                implicitWidth: _horizontalHeaderDelegate.implicitWidth
+                implicitWidth:  _horizontalHeaderDelegate.implicitWidth
                 background: Rectangle {color: "yellow"}
                 placeholderText: "filter"
                 text: _tableView.model.tablesFieldsFilter(_horizontalHeaderText.text)

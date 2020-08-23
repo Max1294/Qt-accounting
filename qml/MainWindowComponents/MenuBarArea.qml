@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 MenuBar {
        Menu {
         title: qsTr("&File")
+        Action {text: qsTr("Open database")}
         Action {text: qsTr("New database")}
         Action {text: qsTr("New table")}
         MenuSeparator { }
@@ -17,8 +18,6 @@ MenuBar {
     }
     Menu {
         title: qsTr("&Actions")
-        Action {text: "Set filter"}
-        MenuSeparator { }
         Action {text: "Add row"}
         Action {text: "Add column"}
     }
