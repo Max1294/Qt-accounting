@@ -16,40 +16,46 @@ TableModel::TableModel(QObject *parent) :
         qDebug() << "Error: can not open Database";
     }
 
+    setTable(database().tables()[m_currentTab]);
+
     m_tablesName = database().tables();
     m_tablesCount = database().tables().size();
     qDebug() << database().databaseName() << " tables count " << m_tablesCount
              << " tables " << m_tablesName;
 
     qDebug() << "test" << headerData(3, Qt::Horizontal);
-    setTab(m_currentTab);
 
     for(int i = 0; i < m_tablesCount; ++i)
     {
         m_tablesFilter.push_back("");
 
-        for(int header = 0; headerData(header, Qt::Horizontal).toString() != QString::number(header+1); ++header)
+        for(int j = 0; headerData(j, Qt::Horizontal).toString() != QString::number(j+1); ++j)
         {
             QHash<QString, QString> tmp;
-            tmp[headerData(header, Qt::Horizontal).toString()] = "";
+            tmp[headerData(j, Qt::Horizontal).toString()] = "";
             m_tablesFieldsFilter.push_back(tmp);
         }
     }
+    select();
 }
 
 void TableModel::setTab(int index)
 {
+    qDebug() << index << database().tables()[m_currentTab];
     m_currentTab = index;
-    setTable(database().tables()[index]);
+    setTable(database().tables()[m_currentTab]);
+    bool isOk = select();
+    qDebug() << "status " << isOk;
+    qDebug() << m_tablesFilter[m_currentTab];
 
-    if(filter() == "")
+    if(m_tablesFilter.at(m_currentTab) == "")
     {
-        qDebug() << "filter is empty";
+        qDebug() << "set table without filters";
         select();
-        return;
     }
-    // TODO: after tab change filtered data shoud be displayed
-    setFilter(filter());
+    else {
+        setFilter(m_tablesFilter.at(m_currentTab));
+    }
 }
 
 void TableModel::editField(int index, QString data)
@@ -73,8 +79,9 @@ void TableModel::sortColumn(int column, QString filter)
     QString columnName = headerData(column, Qt::Horizontal).toString();
     qDebug() << "fil " << m_tablesFieldsFilter[m_currentTab][columnName];
 
-    if(filter == "")
+    if(filter == "order")
     {
+        qDebug() << "order";
         sortCondition = sortCondition == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
         setSort(column, sortCondition);
         select();

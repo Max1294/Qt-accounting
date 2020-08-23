@@ -61,7 +61,7 @@ Rectangle {
                     onClicked: {
                         if(mouse.button === Qt.LeftButton)
                         {
-                            _tableView.model.sortColumn(index)
+                            _tableView.model.sortColumn(index, "order")
                         }
                     }
                 } // MouseArea
