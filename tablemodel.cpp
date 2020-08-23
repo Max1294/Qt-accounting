@@ -87,7 +87,7 @@ void TableModel::sortColumn(int column, QString filter)
         select();
         return;
     }
-
+    // TODO: remove filter
     if(m_tablesFieldsFilter[m_currentTab][columnName] != "" && filter == "")
     {
         m_tablesFieldsFilter[m_currentTab][columnName] = "";
@@ -104,12 +104,9 @@ void TableModel::sortColumn(int column, QString filter)
 
     if(int pos = exp.indexIn(filter); pos != -1)
     {
-        filter = filter.trimmed(); // ???
         m_tablesFieldsFilter[m_currentTab][columnName] = filter;
         filter.insert(pos+ (filter[pos+1] == '=' ? 2 : 1), "'");
         filter.insert(filter.size(), "'");
-        exp.setPattern("\\s");
-        filter.replace(exp, "");
         qDebug() << "filter " << filter;
 
         m_tablesFilter[m_currentTab] += m_tablesFilter[m_currentTab] == "" ? columnName + filter : " AND " + columnName + filter;
