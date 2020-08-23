@@ -14,6 +14,7 @@ Rectangle {
         height: _root.height
         interactive: false
         rowSpacing: 1
+//        columnSpacing: 1
 
         model: _tableView.rows + 1
 
@@ -67,17 +68,33 @@ Rectangle {
                 } // MouseArea
             } // Rectangle
 
-            TextArea {
-                implicitHeight: 30
-                implicitWidth: _horizontalHeaderDelegate.implicitWidth
-                background: Rectangle {color: "yellow"}
-                placeholderText: "filter"
-                text: _tableView.model.tablesFieldsFilter(_horizontalHeaderText.text)
+            Row{
+                spacing: 1
+                TextArea {
+                    implicitHeight: 30
+                    implicitWidth: index === _tableView.columns -1 ? _horizontalHeaderDelegate.implicitWidth
+                                                                     : _horizontalHeaderDelegate.implicitWidth - 30
+                    background: Rectangle {color: "yellow"}
+                    placeholderText: "filter"
+                    text: _tableView.model.tablesFieldsFilter(_horizontalHeaderText.text)
 
-                onEditingFinished: {
-                    _tableView.model.sortColumn(index, text)
-                }
-            } // TextArea
+                    onEditingFinished: {
+                        _tableView.model.sortColumn(index, text)
+                    }
+                } // TextArea
+                Button {
+                    width: index === _tableView.columns -1 ? 0 : 29
+                    height: index === _tableView.columns -1 ? 0 : 30
+                    text: index === _tableView.columns -1 ? "" : "&&"
+                    onClicked: {
+                        if(text === "&&")
+                            text = "|"
+                        else
+                            text = "&&"
+                    }
+                } // Button
+            } // Row
+
         } // delegate
     } // HorizontalHeaderView
 
