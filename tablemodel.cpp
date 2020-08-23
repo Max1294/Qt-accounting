@@ -88,7 +88,17 @@ void TableModel::sortColumn(int column, QString filter)
         return;
     }
 
-    QRegExp exp("^<=|^>=|^<|^>|^=");
+    if(m_tablesFieldsFilter[m_currentTab][columnName] != "" && filter == "")
+    {
+        m_tablesFieldsFilter[m_currentTab][columnName] = "";
+        select();
+    }
+
+    QRegExp exp;
+    exp.setPattern("\\s");
+    filter.replace(exp, "");
+
+    exp.setPattern("^<=|^>=|^<|^>|^=");
 
     qDebug() << "filter " << filter << "reg exp " << exp.indexIn(filter);
 
@@ -105,6 +115,25 @@ void TableModel::sortColumn(int column, QString filter)
         m_tablesFilter[m_currentTab] += m_tablesFilter[m_currentTab] == "" ? columnName + filter : " AND " + columnName + filter;
         qDebug() << m_tablesFilter[m_currentTab];
 
+        setFilter(m_tablesFilter[m_currentTab]);
+        return;
+    }
+
+    exp.setPattern("[-]+");
+    qDebug() << "filter " << filter << "reg exp " << exp.indexIn(filter);
+
+    if(int pos = exp.indexIn(filter); pos != -1) {
+        m_tablesFieldsFilter[m_currentTab][columnName] = filter;
+        filter.insert(0, ">='");
+        filter.insert(pos+3, "'");
+        filter.insert(pos+5, columnName +"<='");
+        filter.insert(filter.size(), "'");
+        filter.replace(exp, " AND ");
+
+        qDebug() << "end filter " << filter;
+        m_tablesFilter[m_currentTab] += m_tablesFilter[m_currentTab] == "" ? columnName + filter : " AND " + columnName + filter;
+
+        qDebug() << "final filter " << m_tablesFilter[m_currentTab];
         setFilter(m_tablesFilter[m_currentTab]);
     }
 }
