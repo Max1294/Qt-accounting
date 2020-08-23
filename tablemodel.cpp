@@ -90,7 +90,7 @@ void TableModel::sortColumn(int column, QString filter)
 
     QRegExp exp("^<=|^>=|^<|^>|^=");
 
-    qDebug() << "reg exp " << exp.indexIn(filter);
+    qDebug() << "filter " << filter << "reg exp " << exp.indexIn(filter);
 
     if(int pos = exp.indexIn(filter); pos != -1)
     {
