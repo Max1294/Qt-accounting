@@ -92,7 +92,7 @@ void TableModel::sortColumn(int column, QString filter)
         select();
         return;
     }
-    // TODO: remove filter
+
     if(m_tablesFieldsFilter[m_currentTab][columnName] != "" && filter == "")
     {
         qDebug() << "enter";

@@ -11,49 +11,38 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
-//    Loader {
-//        id: _loader
-//        anchors.fill: parent
+    //    Loader {
+    //        id: _loader
+    //        anchors.fill: parent
 
-//        Component.onCompleted: setSource("DBArea.qml", {"id": _main,
-//                                             "anchors.top": _menuBar.bottom,
-//                                             "anchors.bottom": _tabBar.top,
-//                                             "anchors.fill": parent})
-//        //        source: qsTr("qrc:/qml/MainWindowComponents/DBArea.qml")
-//    }
+    //        Component.onCompleted: setSource("DBArea.qml", {"id": _main,
+    //                                             "anchors.top": _menuBar.bottom,
+    //                                             "anchors.bottom": _tabBar.top,
+    //                                             "anchors.fill": parent})
+    //        //        source: qsTr("qrc:/qml/MainWindowComponents/DBArea.qml")
+    //    }
 
-//    MouseArea {
-//        anchors.fill: parent
+    //    MouseArea {
+    //        anchors.fill: parent
 
-//        onClicked: {
-//            if(clicked) {
-//                _loader.setSource("qrc:/qml/MainWindowComponents/DBArea.qml",
-//                                      {"id": _main,
-//                                      "anchors.top": _menuBar.bottom,
-//                                      "anchors.bottom": _tabBar.top,
-//                                      "anchors.fill": parent})
-//            }
-//        }
-//    }
+    //        onClicked: {
+    //            if(clicked) {
+    //                _loader.setSource("qrc:/qml/MainWindowComponents/DBArea.qml",
+    //                                      {"id": _main,
+    //                                      "anchors.top": _menuBar.bottom,
+    //                                      "anchors.bottom": _tabBar.top,
+    //                                      "anchors.fill": parent})
+    //            }
+    //        }
+    //    }
 
     // TODO: Load DBArea after db is available
 
-    DBArea {
-        id: _main
-        anchors.top: _menuBar.bottom
-        anchors.bottom: _tabBar.top
-        anchors.fill: parent
-    }
-
-    menuBar: MenuBarArea {
-        id: _menuBar
-        width: _root.width
-        height: Math.min(40, _root.height)
-    }
-
-    footer: TabBar {
+    TabBar {
         id: _tabBar
         width: _root.width
+        height: 30
+        anchors.top: _menuBar.bottom
 
         Repeater {
             id: _repeater
@@ -70,7 +59,7 @@ ApplicationWindow {
         }
 
         background: Rectangle {
-            color: "grey"
+            color: "#91bbd1"
         }
 
         onCurrentIndexChanged: {
@@ -78,4 +67,20 @@ ApplicationWindow {
             console.log("current index " + currentIndex)
         }
     }
+
+    DBArea {
+        id: _main
+        anchors.top: _tabBar.bottom
+        anchors.topMargin: 31
+        anchors.fill: parent
+    }
+
+
+    menuBar: MenuBarArea {
+        id: _menuBar
+        width: _root.width
+        height: Math.min(40, _root.height)
+    }
+
+    background: Rectangle{color: "grey"}
 }
