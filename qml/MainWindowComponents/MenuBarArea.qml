@@ -4,7 +4,7 @@ import QtQuick.Controls 2.3
 MenuBar {
        Menu {
         title: qsTr("&File")
-        Action {text: qsTr("Open database")}
+        MenuBarItem {text: qsTr("Open database"); onTriggered: fileDialog.open()}
         Action {text: qsTr("New database")}
         Action {text: qsTr("New table")}
         MenuSeparator { }

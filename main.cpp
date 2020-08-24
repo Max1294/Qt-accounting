@@ -2,11 +2,13 @@
 #include <QQmlApplicationEngine>
 #include "tablemodel.h"
 
+#include <QApplication>
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
+//    QGuiApplication app(argc, argv);
 
     qmlRegisterType<TableModel>("TableModel", 1, 0, "DatabaseModel");
 

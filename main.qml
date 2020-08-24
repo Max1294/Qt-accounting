@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import MainWindowComponents 1.0
 
 import QtQuick.Window 2.15
+import Qt.labs.platform 1.1
 
 ApplicationWindow {
     id: _root
@@ -37,6 +38,17 @@ ApplicationWindow {
     //    }
 
     // TODO: Load DBArea after db is available
+
+    FileDialog {
+        id: fileDialog
+        folder: StandardPaths.writableLocation(StandardPaths.DesktopLocation)
+        currentFile: ""
+        onFileChanged: {
+            // load DBArea
+            console.log("file" + file)
+        }
+
+    }
 
     TabBar {
         id: _tabBar
