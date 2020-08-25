@@ -19,9 +19,19 @@ Rectangle {
 
         delegate: Rectangle {
             id: _verticalHeaderDelegate
-            implicitHeight: index === 0 ? 81 : 30
+            implicitHeight: index === 0 ? 61 : 30
             implicitWidth: 30
             color: "lightblue"
+
+
+            // TODO make button or mouse area to delete row
+            Button {
+                width: index === 0 ? 0 : 17
+                height: index === 0 ? 0 : 30
+                text: "x"
+                anchors.right: _verticalHeaderDelegate.right
+                anchors.top: _verticalHeaderDelegate.top
+            }
 
             Text {
                 anchors.centerIn: _verticalHeaderDelegate
@@ -34,7 +44,7 @@ Rectangle {
         id: _horizontalHeader
         anchors.left: _tableView.left
         implicitWidth: _root.width
-        height: 50
+        height: 30
         syncView: _tableView
         interactive : false
         columnSpacing: 1
@@ -53,9 +63,23 @@ Rectangle {
                     anchors.centerIn: _horizontalHeaderDelegate
                 }
 
+                Button {
+                    id: _closeButton
+                    width: 20
+                    height: 30
+                    text: "x"
+                    anchors.right: _horizontalHeaderDelegate.right
+
+                    onClicked: {
+                        console.log("delete column")
+                    }
+                }
+
                 MouseArea {
                     id: _headerMouseArea
-                    anchors.fill: parent
+//                    anchors.fill: parent
+                    width: _horizontalHeaderDelegate.width - 20
+                    height: 30
                     hoverEnabled: true
 
                     onClicked: {
