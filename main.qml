@@ -76,7 +76,6 @@ ApplicationWindow {
 
         onCurrentIndexChanged: {
             _main._model.setTab(currentIndex)
-            console.log("current index " + currentIndex)
         }
     }
 

@@ -31,7 +31,6 @@ TableModel::TableModel(QObject *parent) :
 
         for(int j = 0; headerData(j, Qt::Horizontal).toString() != QString::number(j+1); ++j)
         {
-//            m_tablesFilter[i] += "/*" + QString::number(j) + "*/ ";
             tmp.insert(headerData(j, Qt::Horizontal).toString(), "");
         }
 
@@ -52,8 +51,6 @@ void TableModel::setTab(int index)
     qDebug() << index << database().tables()[m_currentTab];
     m_currentTab = index;
     setTable(database().tables()[m_currentTab]);
-//    bool isOk = select();
-//    qDebug() << "status " << isOk;
     qDebug() << m_tablesFilter[m_currentTab];
 
     if(m_tablesFilter.at(m_currentTab) == "")
@@ -86,12 +83,21 @@ void TableModel::editField(int index, QString data)
 void TableModel::sortColumn(int column, QString filter)
 {
     QString columnName = headerData(column, Qt::Horizontal).toString();
-    qDebug() << "fil " << m_tablesFieldsFilter[m_currentTab][columnName];
     QRegExp exp;
+
+    exp.setPattern("\\s");
+    filter.replace(exp, "");
+
+//    setFilter("Name='das'");
+
+//    if(rowCount() == 0) {
+//        qDebug() << "no match";
+//        setFilter("Name='Eric'");
+//        return;
+//    }
 
     if(filter == "order")
     {
-        qDebug() << "order";
         sortCondition = sortCondition == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
         setSort(column, sortCondition);
         select();
@@ -100,41 +106,37 @@ void TableModel::sortColumn(int column, QString filter)
 
     if(filter == "" && m_tablesFieldsFilter[m_currentTab][columnName] != "")
     {
-        qDebug() << "enter";
         QString str = columnName + m_tablesFieldsFilter[m_currentTab][columnName];
         exp.setPattern("\\b" + str);
-        qDebug() << "test filter " << str;
         int pos = exp.indexIn(m_tablesFilter[m_currentTab]);
         int length = exp.matchedLength();
-        qDebug() << "status " << pos << length;
 
         if(pos == -1) return;
 
         m_tablesFieldsFilter[m_currentTab][columnName] = "";
 
         if(pos == 0) {
-            qDebug() << "1";
+            qDebug() << "1" << m_tablesFilter[m_currentTab];
             m_tablesFilter[m_currentTab].replace(pos, length + 5, "");
         }
-        else if(pos > 0 && pos + length == str.size())
+        else if(pos > 0 && (pos + length == m_tablesFilter[m_currentTab].size()))
         {
-            qDebug() << "2";
+            qDebug() << "2" << m_tablesFilter[m_currentTab];
             m_tablesFilter[m_currentTab].replace(pos-5, length + 5, "");
         }
         else
         {
-            qDebug() << "3";
+            qDebug() << "3" << m_tablesFilter[m_currentTab];
             m_tablesFilter[m_currentTab].replace(pos, length + 5, "");
         }
 
         setTable(database().tables()[m_currentTab]);
-        setTab(m_currentTab);
-        qDebug() << "m_tablesFilter " << m_tablesFilter[m_currentTab];
+        setFilter(m_tablesFilter.at(m_currentTab));
+
+//        select();
+        qDebug() << "m_tablesFilter " << m_tablesFilter[m_currentTab] << QSqlTableModel::filter();
         return;
     }
-
-    exp.setPattern("\\s");
-    filter.replace(exp, "");
 
     exp.setPattern("^<=|^>=|^<|^>|^=");
 
@@ -151,6 +153,14 @@ void TableModel::sortColumn(int column, QString filter)
         qDebug() << "m_tablesFilter " <<  m_tablesFilter[m_currentTab];
 
         setFilter(m_tablesFilter[m_currentTab]);
+
+        // TODO don't display empty data
+        if(rowCount() == 0) {
+            qDebug() << "no match";
+            setFilter("1=1");
+            select();
+        }
+
         return;
     }
 

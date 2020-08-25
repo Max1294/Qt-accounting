@@ -75,7 +75,6 @@ Rectangle {
                 text: _tableView.model.tablesFieldsFilter(_horizontalHeaderText.text)
 
                 onEditingFinished: {
-                    console.log("edited " + text)
                     _tableView.model.sortColumn(index, text)
                 }
             } // TextArea
@@ -108,7 +107,6 @@ Rectangle {
 
                 onEditingFinished: {
                     _tableView.model.editField(index, _tableViewText.text)
-                    console.log("edited " + _tableViewText.text)
                 }
             } // TextEdit
         } // Delegate
