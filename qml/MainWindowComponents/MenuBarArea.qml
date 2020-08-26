@@ -18,8 +18,8 @@ MenuBar {
     }
     Menu {
         title: qsTr("&Actions")
-        Action {text: "Add row"}
-        Action {text: "Add column"}
+        MenuBarItem {text: "Add row"; onTriggered: __model.addRow()}
+        MenuBarItem {text: "Add column"; onTriggered: __model.addColumn("NewColumn")}
     }
     Menu {
         title: qsTr("&Help")

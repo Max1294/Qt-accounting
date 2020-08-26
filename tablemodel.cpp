@@ -1,6 +1,7 @@
 #include "tablemodel.h"
 #include <QDebug>
 #include <QSqlRecord>
+#include <QSqlError>
 
 TableModel::TableModel(QObject *parent) :
     QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")},
@@ -196,4 +197,38 @@ QStringList TableModel::tablesName() const
 QString TableModel::tablesFieldsFilter(QString key) const
 {
     return m_tablesFieldsFilter[m_currentTab][key];
+}
+
+void TableModel::addColumn(QString column)
+{
+    database().exec("ALTER TABLE " + database().tables()[m_currentTab] + " ADD " + column + " NULL");
+    setTab(m_currentTab);
+}
+
+void TableModel::deleteColumn(int column)
+{
+    qDebug() << database().exec("BEGIN TRANSACTION").lastError().text();
+    qDebug() << database().exec("CREATE TEMPORARY TABLE backup_(Name,Surname,Number)").lastError().text();
+    qDebug() << database().exec("INSERT INTO backup_ SELECT Name,Surname,Number FROM Contacts").lastError().text();
+    qDebug() << database().exec("DROP TABLE Contacts").lastError().text();
+    qDebug() << database().exec("CREATE TABLE Contacts(Name,Surname,Number)").lastError().text();
+    qDebug() << database().exec("INSERT INTO Contacts SELECT Name,Surname,Number FROM backup_").lastError().text();
+    qDebug() << database().exec("DROP TABLE backup_").lastError().text();
+    qDebug() << database().exec("COMMIT").lastError().text();
+
+    removeColumn(column);
+}
+
+void TableModel::addRow()
+{
+    qDebug() << database().exec("INSERT INTO Contacts (Name,Surname,Number) VALUES ('1', '2', '3')" ).lastError().text();
+    insertRow(rowCount());
+    setTab(m_currentTab);
+    submitAll();
+}
+
+void TableModel::deleteRow(int row)
+{
+    qDebug() << "row remove status " << removeRow(row);
+    setTab(m_currentTab);
 }

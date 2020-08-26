@@ -16,6 +16,10 @@ public:
     Q_INVOKABLE void editField(int index, QString data);
     Q_INVOKABLE void sortColumn(int column, QString filter = "");
     Q_INVOKABLE QString tablesFieldsFilter(QString key) const;
+    Q_INVOKABLE void addColumn(QString column);
+    Q_INVOKABLE void deleteColumn(int column);
+    Q_INVOKABLE void addRow();
+    Q_INVOKABLE void deleteRow(int row);
 
     int tablesCount() const;
     QStringList tablesName() const;

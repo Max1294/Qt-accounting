@@ -12,6 +12,8 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
+    property alias __model: _main._model
+
     //    Loader {
     //        id: _loader
     //        anchors.fill: parent

@@ -31,6 +31,11 @@ Rectangle {
                 text: "x"
                 anchors.right: _verticalHeaderDelegate.right
                 anchors.top: _verticalHeaderDelegate.top
+
+                onClicked: {
+                    console.log("delete row")
+                    _model.deleteRow(index-1)
+                }
             }
 
             Text {
@@ -71,6 +76,7 @@ Rectangle {
                     anchors.right: _horizontalHeaderDelegate.right
 
                     onClicked: {
+                        _model.deleteColumn(index)
                         console.log("delete column")
                     }
                 }
