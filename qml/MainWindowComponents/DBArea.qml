@@ -1,122 +1,145 @@
-import QtQuick 2.15 as Quick
-import QtQuick.Window 2.12
+import QtQuick 2.15
+import TableModel 1.0
 import QtQuick.Controls 2.15
-import TableModel 1.0 as DBModel
-import QtQuick.Controls 1.4 as QuickCont
-import QtQuick.Controls.Styles 1.4
 
-QuickCont.TableView {
-    id: _tableView
-//    anchors.fill: _tab1
-    sortIndicatorVisible: true
-    sortIndicatorOrder: Qt.DescendingOrder
-    sortIndicatorColumn: 1
+Rectangle {
+    id: _root
+    property alias _model: _tableView.model
 
-    Quick.Component
-    {
-        id: columnComponent
-        QuickCont.TableViewColumn{width: _tableView.width / _tableView.model.columnCount();}
-    }
+    color: "grey"
 
-    resources: {
-        var roleList = _tableView.model.roles
-        var temp = []
+    VerticalHeaderView {
+        id: _verticalHeader
+        implicitWidth: 30
+        height: _root.height
+        interactive: false
+        rowSpacing: 1
 
-        for(var i=0; i<roleList.length; i++)
-        {
-            var role  = roleList[i]
-            temp.push(columnComponent.createObject(_tableView, {"title": role, "title": _tableView.model.roles[i]}))
-        }
+        model: _tableView.rows + 1
 
-        return temp
-    }
-
-    model: DBModel.DatabaseModel{}
-
-    itemDelegate: Quick.Rectangle{
-        property var index: [-1, -1]
-        property string text: ""
-
-        id: _itemDelegate
-        color: "black"
-        width: _tableView.width / _tableView.model.columnCount()
-        border.width: 1
-        border.color: "green"
-            Quick.TextEdit {
-                function foo(string) {
-                    console.log("str " + string)
-                    return string
-                }
-
-            id: _edit
-            color: "white"
-            text: _tableView.model.rows[styleData.row][styleData.column].toString()
-            font.pointSize: 8
-            anchors.centerIn: _itemDelegate
-
-              onEditingFinished: {
-                index = [styleData.row, styleData.column]
-                if(_tableView.model.rows[index[0]][index[1]] !== _edit.text)
-                {
-                    console.log("Update " + index)
-                     _tableView.model.updateData(index[0], index[1], text)
-                }
-
-                console.log("YE$S " + index + " model text " + _tableView.model.rows[index[0]][index[1]]
-                            + " text " + _edit.text)
-            }
-        }
-    }
-
-    headerDelegate: Quick.Rectangle{
-        id: _headerDelegate
-        border.width: 1
-        border.color: "green"
-        height: 100
-        color: "grey"
-
-        Quick.Text {
-            text: styleData.value
+        delegate: Rectangle {
+            id: _verticalHeaderDelegate
+            implicitHeight: index === 0 ? 61 : 30
+            implicitWidth: 30
             color: "lightblue"
-            font.pointSize: 8
-            anchors.centerIn: _headerDelegate
-        } // Text
-    }
 
-    rowDelegate: Quick.Rectangle {
-        id: _rowDeleg
-        color: "lightsteelblue"
-        height: 30
-        border.width: 1
-        Quick.MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.RightButton
-            hoverEnabled: true
 
-            // TODO: click -> open options: edir, delete, copy, paste
-            onClicked: {
-                if(mouse.button === Qt.RightButton){
-                    _flipMenu.popup()
-                    console.log(styleData.row)
+            // TODO make button or mouse area to delete row
+            Button {
+                width: index === 0 ? 0 : 17
+                height: index === 0 ? 0 : 30
+                text: "x"
+                anchors.right: _verticalHeaderDelegate.right
+                anchors.top: _verticalHeaderDelegate.top
+
+                onClicked: {
+                    console.log("delete row")
+                    _model.deleteRow(index-1)
                 }
             }
 
-            QuickCont.Menu {
-                id: _flipMenu
+            Text {
+                anchors.centerIn: _verticalHeaderDelegate
+                text: index === 0 ? "№" : index
+            } // Text
+        } // delegate
+    } // VerticalHeaderView
 
-                QuickCont.MenuItem {
-                    text: qsTr("edit row")
+    HorizontalHeaderView {
+        id: _horizontalHeader
+        anchors.left: _tableView.left
+        implicitWidth: _root.width
+        height: 30
+        syncView: _tableView
+        interactive : false
+        columnSpacing: 1
+        rowSpacing: 1
+
+        delegate: Column {
+            spacing: 1
+            Rectangle {
+                id: _horizontalHeaderDelegate
+                implicitHeight: _horizontalHeader.height
+                implicitWidth: Math.max(_horizontalHeaderText.contentWidth + 10, _tableView.width / _tableView.columns)
+                color: "lightblue"
+                Text {
+                    id: _horizontalHeaderText
+                    text: display
+                    anchors.centerIn: _horizontalHeaderDelegate
                 }
-                QuickCont.MenuItem {
-                    text: qsTr("copy row")
+
+                Button {
+                    id: _closeButton
+                    width: 20
+                    height: 30
+                    text: "x"
+                    anchors.right: _horizontalHeaderDelegate.right
+
+                    onClicked: {
+                        _model.deleteColumn(index)
+                        console.log("delete column")
+                    }
                 }
-                QuickCont.MenuItem {
-                    text: qsTr("replace row")
+
+                MouseArea {
+                    id: _headerMouseArea
+//                    anchors.fill: parent
+                    width: _horizontalHeaderDelegate.width - 20
+                    height: 30
+                    hoverEnabled: true
+
+                    onClicked: {
+                        if(mouse.button === Qt.LeftButton)
+                        {
+                            _tableView.model.sortColumn(index, "order")
+                        }
+                    }
+                } // MouseArea
+            } // Rectangle
+
+            TextArea {
+                implicitHeight: 30
+                implicitWidth:  _horizontalHeaderDelegate.implicitWidth
+                background: Rectangle {color: "yellow"}
+                placeholderText: "filter"
+                text: _tableView.model.tablesFieldsFilter(_horizontalHeaderText.text)
+
+                onEditingFinished: {
+                    _tableView.model.sortColumn(index, text)
                 }
-                QuickCont.MenuItem {
-                    text: qsTr("delete row")
+            } // TextArea
+        } // delegate
+    } // HorizontalHeaderView
+
+    TableView {
+        id: _tableView
+        width: _root.width - 30
+        height: _root.height - 50
+        anchors.top: _horizontalHeader.bottom
+        anchors.left: _verticalHeader.right
+        anchors.topMargin: 32
+        anchors.leftMargin: 1
+        columnSpacing: 1
+        rowSpacing: 1
+        interactive : false
+
+        model: DatabaseModel{}
+
+        delegate: Rectangle {
+            id: _tableViewDelegate
+            implicitHeight: 30
+            implicitWidth: Math.max(_tableViewText.contentWidth + 10, _tableView.width / _tableView.columns)
+            color: "green"
+            TextEdit {
+                id: _tableViewText
+                anchors.centerIn: _tableViewDelegate
+                text: display
+
+                onEditingFinished: {
+                    _tableView.model.editField(index, _tableViewText.text)
                 }
-            } // Menu
-        } // MouseArea
-    } // rowDelegate: Rectangle
-} // TableView
+            } // TextEdit
+        } // Delegate
+    } // TableView
+} // Item
+

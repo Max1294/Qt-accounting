@@ -1,117 +1,241 @@
 #include "tablemodel.h"
 #include <QDebug>
+#include <QSqlRecord>
 #include <QSqlError>
-TableModel::TableModel(QObject *parent) :
-    m_DBManager{DBManager::instance()}
-{
-    // ATTACH '/home/drago/.local/share/Application/TestDB' AS my_db;
-    // SELECT name FROM my_db.sqlite_master WHERE type='table'; // all tables from db
-    Q_UNUSED(parent)
-    m_DBManager.OpenDatabase("TestDB");
-    QSqlQuery query = m_DBManager.query();
-    query.exec("SELECT COUNT(1) FROM Contacts");
-    query.next();
-    m_rowCount = query.value(0).toInt();
 
-    qDebug() << "names: " << query.exec("pragma table_info(Contacts)"); // get columns names
-    for(int i = 1; query.next(); ++i)
-    {
-         qDebug() << "data " << query.value(1).toString();
-         // m_roleNames.insert((Qt::UserRole + i),  query.value(1).toByteArray());
-         m_roles.push_back(query.value(1).toByteArray());
-         m_roleNames[Qt::UserRole + i] = query.value(1).toByteArray();
-         qDebug() << "m_roleNames " << m_roleNames[Qt::UserRole + i];
-         qDebug() << "m_roles " << m_roles;
+TableModel::TableModel(QObject *parent) :
+    QSqlTableModel{parent, QSqlDatabase::addDatabase("QSQLITE")},
+    m_currentTab{0},
+    sortCondition{Qt::AscendingOrder}
+{
+    database().setDatabaseName(QString{"/home/drago/Desktop/QtProjects/TestDB"});
+    setEditStrategy(QSqlTableModel::OnFieldChange);
+
+    qDebug() << "driver: " << database().isValid();
+
+    if (!database().open()) {
+        qDebug() << "Error: can not open Database";
     }
 
-    query.exec("SELECT Name, Surname, Number FROM Contacts");
-    QSqlRecord record = query.record();
-    m_columnCount = record.count();
-    m_rows.reserve(m_rowCount);
-    m_rows.resize(m_rowCount);
+    m_tablesName = database().tables();
+    m_tablesCount = database().tables().size();
+    qDebug() << database().databaseName() << " tables count " << m_tablesCount
+             << " tables " << m_tablesName;
 
-    for(int i = 0; query.next(); ++i)
+    qDebug() << "test" << headerData(3, Qt::Horizontal);
+
+    for(int i = 0; i < m_tablesCount; ++i)
     {
-        for(int j = 0; j < m_columnCount; ++j)
+        m_tablesFilter.push_back("");
+        setTable(database().tables()[i]);
+        QHash<QString, QString> tmp;
+
+        for(int j = 0; headerData(j, Qt::Horizontal).toString() != QString::number(j+1); ++j)
         {
-            m_rows[i] << QVariant::fromValue(query.value(j));
+            tmp.insert(headerData(j, Qt::Horizontal).toString(), "");
         }
 
+        m_tablesFieldsFilter.push_back(tmp);
     }
 
-    //    m_rows = {"Jhon", "Bruno", 32};
-    qDebug() << "m_rows: " << m_rows;
-    qDebug() << "Number of columns: " << m_columnCount << "Number of rows: " << m_rowCount;
-}
-
-int TableModel::rowCount(const QModelIndex &) const
-{
-    return m_rowCount + 1;
-}
-
-int TableModel::columnCount(const QModelIndex &) const
-{
-    return m_columnCount;
-}
-
-QVariant TableModel::data(const QModelIndex &index, int role) const
-{
-    if(!index.isValid())// && role == Qt::DisplayRole)
+    qDebug() << "size " << m_tablesFieldsFilter.size() << m_tablesFilter.size();
+    for(auto it = m_tablesFieldsFilter.begin(); it != m_tablesFieldsFilter.end(); ++it)
     {
-        return QVariant{};
+        qDebug() << "it " << *it;
     }
 
-    if (role == Qt::DisplayRole) return QString("moc data");
-
-    return QVariant::fromValue(m_rows[index.row()][index.column()]);
+    qDebug() << "m_tablesFilter " << m_tablesFilter;
 }
 
-QHash<int, QByteArray> TableModel::roleNames() const
+void TableModel::setTab(int index)
 {
-    return m_roleNames;
-    //return {{Qt::DisplayRole, "display"}};//m_roleNames;
-}
+    qDebug() << index << database().tables()[m_currentTab];
+    m_currentTab = index;
+    setTable(database().tables()[m_currentTab]);
+    qDebug() << m_tablesFilter[m_currentTab];
 
-QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole || orientation != Qt::Horizontal) {
-                return QVariant();
+    if(m_tablesFilter.at(m_currentTab) == "")
+    {
+        qDebug() << "set table without filters";
+        select();
     }
-    return QVariant::fromValue(m_roleNames[section]);
+    else {
+        setFilter(m_tablesFilter.at(m_currentTab));
+        select();
+    }
 }
 
-QVector<QVariantList> TableModel::rows() const
+void TableModel::editField(int index, QString data)
 {
-    return m_rows;
+    int row = index%rowCount();
+    int column = index/rowCount();
+
+    if (data == record(row).value(column)) return;
+
+    qDebug() << "edit " << record(row).value(column) << " on " << data;
+
+    auto tempRecord = record(row);
+    tempRecord.setValue(column, data);
+
+    updateRowInTable(row, tempRecord);
+    setData(createIndex(row, column), data);
 }
 
-QVector<QByteArray> TableModel::roles() const
+void TableModel::sortColumn(int column, QString filter)
 {
-    return m_roles;
+    QString columnName = headerData(column, Qt::Horizontal).toString();
+    QRegExp exp;
+
+    exp.setPattern("\\s");
+    filter.replace(exp, "");
+
+//    setFilter("Name='das'");
+
+//    if(rowCount() == 0) {
+//        qDebug() << "no match";
+//        setFilter("Name='Eric'");
+//        return;
+//    }
+
+    if(filter == "order")
+    {
+        sortCondition = sortCondition == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+        setSort(column, sortCondition);
+        select();
+        return;
+    }
+
+    if(filter == "" && m_tablesFieldsFilter[m_currentTab][columnName] != "")
+    {
+        QString str = columnName + m_tablesFieldsFilter[m_currentTab][columnName];
+        exp.setPattern("\\b" + str);
+        int pos = exp.indexIn(m_tablesFilter[m_currentTab]);
+        int length = exp.matchedLength();
+
+        if(pos == -1) return;
+
+        m_tablesFieldsFilter[m_currentTab][columnName] = "";
+
+        if(pos == 0) {
+            qDebug() << "1" << m_tablesFilter[m_currentTab];
+            m_tablesFilter[m_currentTab].replace(pos, length + 5, "");
+        }
+        else if(pos > 0 && (pos + length == m_tablesFilter[m_currentTab].size()))
+        {
+            qDebug() << "2" << m_tablesFilter[m_currentTab];
+            m_tablesFilter[m_currentTab].replace(pos-5, length + 5, "");
+        }
+        else
+        {
+            qDebug() << "3" << m_tablesFilter[m_currentTab];
+            m_tablesFilter[m_currentTab].replace(pos, length + 5, "");
+        }
+
+        setTable(database().tables()[m_currentTab]);
+        setFilter(m_tablesFilter.at(m_currentTab));
+
+//        select();
+        qDebug() << "m_tablesFilter " << m_tablesFilter[m_currentTab] << QSqlTableModel::filter();
+        return;
+    }
+
+    exp.setPattern("^<=|^>=|^<|^>|^=");
+
+    qDebug() << "filter " << filter << "reg exp " << exp.indexIn(filter);
+
+    if(int pos = exp.indexIn(filter); pos != -1)
+    {
+        filter.insert(pos+ (filter[pos+1] == '=' ? 2 : 1), "'");
+        filter.insert(filter.size(), "'");
+        m_tablesFieldsFilter[m_currentTab][columnName] = filter;
+        qDebug() << "filter " << filter;
+
+        m_tablesFilter[m_currentTab] += m_tablesFilter[m_currentTab] == "" ? columnName + filter : " AND " + columnName + filter;
+        qDebug() << "m_tablesFilter " <<  m_tablesFilter[m_currentTab];
+
+        setFilter(m_tablesFilter[m_currentTab]);
+
+        // TODO don't display empty data
+        if(rowCount() == 0) {
+            qDebug() << "no match";
+            setFilter("1=1");
+            select();
+        }
+
+        return;
+    }
+
+    exp.setPattern("[-]+");
+    qDebug() << "filter " << filter << "reg exp " << exp.indexIn(filter);
+
+    if(int pos = exp.indexIn(filter); pos != -1) {
+        filter.insert(0, ">='");
+        filter.insert(pos+3, "'");
+        filter.insert(pos+5, columnName +"<='");
+        filter.insert(filter.size(), "'");
+        m_tablesFieldsFilter[m_currentTab][columnName] = filter;
+        filter.replace(exp, " AND ");
+
+        qDebug() << "end filter " << filter;
+        m_tablesFilter[m_currentTab] += m_tablesFilter[m_currentTab] == "" ? columnName + filter : " AND " + columnName + filter;
+
+        qDebug() << "final filter " << m_tablesFilter[m_currentTab];
+        setFilter(m_tablesFilter[m_currentTab]);
+    }
 }
 
-void TableModel::updateData(const int row, const int column, QString newdata)
+int TableModel::tablesCount() const
 {
-    std::string queryText = "UPDATE Contacts SET " + m_roles[column].toStdString() + "='" + newdata.toStdString() + "'" + " WHERE " + m_roles[column].toStdString() + "='" + m_rows[row][column].toString().toStdString() + "'";
-
-    auto query = m_DBManager.query();
-
-    qDebug() <<  "query " << QString::fromUtf8(queryText.c_str());
-//              << " status " << query.prepare(QString::fromUtf8(queryText.c_str()))
-//              << "error " << query.lastError().text();
-    m_DBManager.query().exec(QString::fromUtf8(queryText.c_str()));
-    m_rows[row][column] = QVariant(newdata);
+    return m_tablesCount;
 }
 
-void TableModel::sortConditions(int column, QVariant conditions...)
+QStringList TableModel::tablesName() const
 {
-    if(conditions.Size > 2 || conditions.Size == 0) return;
+    return m_tablesName;
+}
 
-    auto query = m_DBManager.query();
+QString TableModel::tablesFieldsFilter(QString key) const
+{
+    return m_tablesFieldsFilter[m_currentTab][key];
+}
 
-    QString queryText = "SELECT " + QString::fromUtf8(m_roles[column].toStdString().c_str()) + " FROM Contacts WHERE "
-            + (conditions.Size == 1 ? QVariant::fromValue(conditions).toString()
-                                    : QVariant::fromValue(conditions).toString() + " AND " + QVariant::fromValue(conditions).toString());
+void TableModel::addColumn(QString column)
+{
+    static int c = 1;
+    database().exec("ALTER TABLE " + database().tables()[m_currentTab] + " ADD " + column + QString::number(c) + " NULL");
+    setTab(m_currentTab);
+    ++c;
+}
 
-    qDebug() << "sort execute " << query.exec(queryText);
+void TableModel::deleteColumn(int column)
+{
+    qDebug() << database().exec("BEGIN TRANSACTION").lastError().text();
+    qDebug() << database().exec("CREATE TEMPORARY TABLE backup_(Name,Surname,Number)").lastError().text();
+    qDebug() << database().exec("INSERT INTO backup_ SELECT Name,Surname,Number FROM Contacts").lastError().text();
+    qDebug() << database().exec("DROP TABLE Contacts").lastError().text();
+    qDebug() << database().exec("CREATE TABLE Contacts(Name,Surname,Number)").lastError().text();
+    qDebug() << database().exec("INSERT INTO Contacts SELECT Name,Surname,Number FROM backup_").lastError().text();
+    qDebug() << database().exec("DROP TABLE backup_").lastError().text();
+    qDebug() << database().exec("COMMIT").lastError().text();
+
+    removeColumn(column);
+}
+
+void TableModel::addRow()
+{
+    static int q = 1;
+    qDebug() << database().exec("INSERT INTO Contacts (Name,Surname,Number) VALUES ('"
+                                + QString::number(q) + "', '"
+                                + QString::number(++q) + "', '"
+                                + QString::number(++q) + "')" ).lastError().text();
+    insertRow(rowCount());
+    setTab(m_currentTab);
+    submitAll();
+    ++q;
+}
+
+void TableModel::deleteRow(int row)
+{
+    qDebug() << "row remove status " << removeRow(row);
+    setTab(m_currentTab);
 }
