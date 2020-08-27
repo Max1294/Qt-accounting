@@ -201,8 +201,10 @@ QString TableModel::tablesFieldsFilter(QString key) const
 
 void TableModel::addColumn(QString column)
 {
-    database().exec("ALTER TABLE " + database().tables()[m_currentTab] + " ADD " + column + " NULL");
+    static int c = 1;
+    database().exec("ALTER TABLE " + database().tables()[m_currentTab] + " ADD " + column + QString::number(c) + " NULL");
     setTab(m_currentTab);
+    ++c;
 }
 
 void TableModel::deleteColumn(int column)
@@ -221,10 +223,15 @@ void TableModel::deleteColumn(int column)
 
 void TableModel::addRow()
 {
-    qDebug() << database().exec("INSERT INTO Contacts (Name,Surname,Number) VALUES ('1', '2', '3')" ).lastError().text();
+    static int q = 1;
+    qDebug() << database().exec("INSERT INTO Contacts (Name,Surname,Number) VALUES ('"
+                                + QString::number(q) + "', '"
+                                + QString::number(++q) + "', '"
+                                + QString::number(++q) + "')" ).lastError().text();
     insertRow(rowCount());
     setTab(m_currentTab);
     submitAll();
+    ++q;
 }
 
 void TableModel::deleteRow(int row)
