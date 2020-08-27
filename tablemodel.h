@@ -1,42 +1,34 @@
 #pragma once
-
-#include <QObject>
-#include <QAbstractTableModel>
-#include "dbmanager.h"
+#include <QSqlTableModel>
+#include <QSqlQuery>
 #include <QVector>
-#include <QMimeData>
+#include <QHash>
 
-class TableModel : public QAbstractTableModel
+class TableModel : public QSqlTableModel
 {
     Q_OBJECT
-    Q_PROPERTY(QVector<QByteArray> roles READ roles CONSTANT)
-    Q_PROPERTY(QVector<QVariantList> rows READ rows CONSTANT)
+    Q_PROPERTY(int tablesCount READ tablesCount CONSTANT)
+    Q_PROPERTY(QStringList tablesName READ tablesName CONSTANT)
 public:
     explicit TableModel(QObject* parent = nullptr);
 
-    int rowCount(const QModelIndex& = QModelIndex()) const override;
-    int columnCount(const QModelIndex& = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    QHash<int, QByteArray> roleNames() const override;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Q_INVOKABLE void setTab (int index);
+    Q_INVOKABLE void editField(int index, QString data);
+    Q_INVOKABLE void sortColumn(int column, QString filter = "");
+    Q_INVOKABLE QString tablesFieldsFilter(QString key) const;
+    Q_INVOKABLE void addColumn(QString column);
+    Q_INVOKABLE void deleteColumn(int column);
+    Q_INVOKABLE void addRow();
+    Q_INVOKABLE void deleteRow(int row);
 
-    QVector<QVariantList> rows() const;
-    QVector<QByteArray> roles() const;
+    int tablesCount() const;
+    QStringList tablesName() const;
 
-    void SetData(int row, int column, QString data);
-    void AddColumn(QString columnName);
-    void addRow(); // add params
-    QString changeTable(QString tableName);
-
-    static TableModel& foo();
-
-    Q_INVOKABLE void updateData(const int row, const int column, QString newdata);
-    Q_INVOKABLE void sortConditions(int column, QVariant conditions...);
 private:
-    DBManager& m_DBManager;
-    int m_rowCount;
-    int m_columnCount;
-    QHash<int, QByteArray> m_roleNames; // QVector<QHash<int, QByteArray>> ??
-    QVector<QVariantList> m_rows;
-    QVector<QByteArray> m_roles;
+    int m_tablesCount;
+    QStringList m_tablesName;
+    int m_currentTab;
+    Qt::SortOrder sortCondition;
+    QVector<QHash<QString, QString>> m_tablesFieldsFilter;
+    QVector<QString> m_tablesFilter;
 };

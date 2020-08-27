@@ -1,14 +1,10 @@
-
-import QtQuick.Window 2.15
-import QtQuick.Controls 1.4
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.0
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import MainWindowComponents 1.0
-import QtQuick 2.15
 
-import QtQuick.Controls.Styles 1.4
-import TableModel 1.0
+import QtQuick.Window 2.15
+import Qt.labs.platform 1.1
+
 ApplicationWindow {
     id: _root
     visible: true
@@ -16,44 +12,127 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
-    TableView {
-        id: _tableView
-        anchors.fill: parent
-        columnSpacing: 1
-        rowSpacing: 1
-        interactive : false
+    property alias __model: _main._model
 
-        model: DatabaseModel{}
+    //    Loader {
+    //        id: _loader
+    //        anchors.fill: parent
 
-        function getRowData(index) {
-            return _tableView.model.rows[Math.floor(index % (_tableView.rows)) - 1][Math.floor(index / (_tableView.rows))].toString()
+    //        Component.onCompleted: setSource("DBArea.qml", {"id": _main,
+    //                                             "anchors.top": _menuBar.bottom,
+    //                                             "anchors.bottom": _tabBar.top,
+    //                                             "anchors.fill": parent})
+    //        //        source: qsTr("qrc:/qml/MainWindowComponents/DBArea.qml")
+    //    }
+
+    //    MouseArea {
+    //        anchors.fill: parent
+
+    //        onClicked: {
+    //            if(clicked) {
+    //                _loader.setSource("qrc:/qml/MainWindowComponents/DBArea.qml",
+    //                                      {"id": _main,
+    //                                      "anchors.top": _menuBar.bottom,
+    //                                      "anchors.bottom": _tabBar.top,
+    //                                      "anchors.fill": parent})
+    //            }
+    //        }
+    //    }
+
+    // TODO: Load DBArea after db is available
+
+    FileDialog {
+        id: fileDialog
+        folder: StandardPaths.writableLocation(StandardPaths.DesktopLocation)
+        currentFile: ""
+        onFileChanged: {
+            // load DBArea
+            console.log("file" + file)
         }
 
-        function getHeaderData(index) {
-            console.log(index)
-            return _tableView.model.roles[Math.floor(index/(_tableView.rows))]
-        }
+    }
 
-        delegate: Rectangle {
-            implicitHeight: 30
-            implicitWidth: 200
-            id: _delegate
-            color: index % _tableView.rows === 0 ? "lightblue" : "green"
-            Text {
-                anchors.centerIn: _delegate
-                text: index % _tableView.rows === 0 ? _tableView.getHeaderData(index) : _tableView.getRowData(index)
+    TabBar {
+        id: _tabBar
+        width: _root.width
+        height: 30
+        anchors.top: _menuBar.bottom
+
+        Repeater {
+            id: _repeater
+            model: _main._model.tablesName
+            TabButton {
+                text: modelData
+                width: implicitWidth
+
+                background: Rectangle {
+                    id: _tabBachground
+                    color: "#469c9b"
+                }
             }
+        }
+
+        background: Rectangle {
+            color: "#91bbd1"
+        }
+
+        onCurrentIndexChanged: {
+            _main._model.setTab(currentIndex)
         }
     }
 
-//    MainArea {
-//        anchors.top: _menuBar.bottom
-//        anchors.fill: parent
+    DBArea {
+        id: _main
+        anchors.top: _tabBar.bottom
+        anchors.topMargin: 31
+        anchors.fill: parent
+    }
+
+    // TODO make ScrollBars for table view
+//    Rectangle {
+//        id: frame
+//        clip: true
+//        width: 160
+//        height: 160
+//        border.color: "black"
+//        anchors.centerIn: parent
+
+//        Text {
+//            id: content
+//            text: "ABC"
+//            font.pixelSize: 160
+//            x: -hbar.position * width
+//            y: -vbar.position * height
+//        }
+
+//        ScrollBar {
+//            id: vbar
+//            hoverEnabled: true
+//            active: hovered || pressed
+//            orientation: Qt.Vertical
+//            size: frame.height / content.height
+//            anchors.top: parent.top
+//            anchors.right: parent.right
+//            anchors.bottom: parent.bottom
+//        }
+
+//        ScrollBar {
+//            id: hbar
+//            hoverEnabled: true
+//            active: hovered || pressed
+//            orientation: Qt.Horizontal
+//            size: frame.width / content.width
+//            anchors.left: parent.left
+//            anchors.right: parent.right
+//            anchors.bottom: parent.bottom
+//        }
 //    }
 
-//    menuBar: MenuBarArea {
-//        id: _menuBar
-//        width: _root.width
-//        height: Math.min(40, _root.height)
-//    }
+    menuBar: MenuBarArea {
+        id: _menuBar
+        width: _root.width
+        height: Math.min(40, _root.height)
+    }
+
+    background: Rectangle{color: "grey"}
 }

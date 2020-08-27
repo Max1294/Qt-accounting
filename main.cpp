@@ -1,16 +1,17 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "tablemodel.h"
-#include "function.h"
+
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
+//    QGuiApplication app(argc, argv);
 
     qmlRegisterType<TableModel>("TableModel", 1, 0, "DatabaseModel");
-//    OpenDatabase("TestDB");
+
     QQmlApplicationEngine engine;
     engine.addImportPath(":/qml");
     const QUrl url(QStringLiteral("qrc:/main.qml"));
