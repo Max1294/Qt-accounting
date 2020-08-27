@@ -133,7 +133,7 @@ Rectangle {
             TextEdit {
                 id: _tableViewText
                 anchors.centerIn: _tableViewDelegate
-                text: display
+                text: display === "" ? "NULL" : display
 
                 onEditingFinished: {
                     _tableView.model.editField(index, _tableViewText.text)
@@ -142,4 +142,3 @@ Rectangle {
         } // Delegate
     } // TableView
 } // Item
-

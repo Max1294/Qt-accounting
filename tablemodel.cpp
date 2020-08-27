@@ -209,25 +209,72 @@ void TableModel::addColumn(QString column)
 
 void TableModel::deleteColumn(int column)
 {
+    QVector<QString> columns;
+
+    for(int i = 0; headerData(i, Qt::Horizontal).toString() != QString::number(i+1); ++i)
+    {
+        if(i == column) continue;
+        qDebug() << headerData(i, Qt::Horizontal).toString() + ",";
+        columns.push_back(headerData(i, Qt::Horizontal).toString() + ",");
+    }
+
+    int pos = columns[columns.size()-1].lastIndexOf(',');
+    columns[columns.size()-1]=columns[columns.size()-1].left(pos);
+    qDebug() <<  columns[columns.size()-1];
     qDebug() << database().exec("BEGIN TRANSACTION").lastError().text();
-    qDebug() << database().exec("CREATE TEMPORARY TABLE backup_(Name,Surname,Number)").lastError().text();
-    qDebug() << database().exec("INSERT INTO backup_ SELECT Name,Surname,Number FROM Contacts").lastError().text();
-    qDebug() << database().exec("DROP TABLE Contacts").lastError().text();
-    qDebug() << database().exec("CREATE TABLE Contacts(Name,Surname,Number)").lastError().text();
-    qDebug() << database().exec("INSERT INTO Contacts SELECT Name,Surname,Number FROM backup_").lastError().text();
-    qDebug() << database().exec("DROP TABLE backup_").lastError().text();
-    qDebug() << database().exec("COMMIT").lastError().text();
+
+    QString query;
+    for(auto& column : columns)
+    {
+        query += column;
+    }
+
+    auto _table = database().tables()[m_currentTab];
+
+    qDebug() << "1"  << database().exec("CREATE TEMPORARY TABLE backup_(" + query + ")").lastError().text();
+    qDebug() << "2 INSERT INTO backup_ SELECT " + query + " FROM " + database().tables()[m_currentTab]
+                << database().exec("INSERT INTO backup_ SELECT " + query + " FROM " + database().tables()[m_currentTab]).lastError().text();
+    qDebug() << "3"  << database().exec("DROP TABLE " + database().tables()[m_currentTab]).lastError().text();
+    qDebug() << "4"  << database().exec("CREATE TABLE " + _table + "(" + query + ")").lastError().text();
+    qDebug() << "5" << database().exec("INSERT INTO " + _table + " SELECT " + query + " FROM backup_").lastError().text();
+    qDebug() << "6"  << database().exec("DROP TABLE backup_").lastError().text();
+    qDebug() << "7"  << database().exec("COMMIT").lastError().text();
 
     removeColumn(column);
 }
 
 void TableModel::addRow()
 {
+
+    QVector<QString> headers;
+    QString values;
+
+    for(int i = 0; headerData(i, Qt::Horizontal).toString() != QString::number(i+1); ++i)
+    {
+        values += "NULL,";
+        qDebug() << headerData(i, Qt::Horizontal).toString() + ",";
+        headers.push_back(headerData(i, Qt::Horizontal).toString() + ",");
+    }
+
+    int pos = headers[headers.size()-1].lastIndexOf(',');
+    headers[headers.size()-1]=headers[headers.size()-1].left(pos);
+    qDebug() <<  headers[headers.size()-1];
+
+    pos = values.lastIndexOf(',');
+    values = values.left(pos);
+    qDebug() <<  values;
+
+    QString query;
+    for(auto& header : headers)
+    {
+        query += header;
+    }
+
     static int q = 1;
-    qDebug() << database().exec("INSERT INTO Contacts (Name,Surname,Number) VALUES ('"
-                                + QString::number(q) + "', '"
-                                + QString::number(++q) + "', '"
-                                + QString::number(++q) + "')" ).lastError().text();
+    QString queryText = "INSERT INTO " + database().tables()[m_currentTab] + " (" + query + ") VALUES (" + values + ")";
+    qDebug() <<queryText;
+    qDebug() << database().exec(queryText).lastError().text();
+
     insertRow(rowCount());
     setTab(m_currentTab);
     submitAll();
