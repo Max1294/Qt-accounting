@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     qmlRegisterType<TableModel>("TableModel", 1, 0, "DatabaseModel");
-
 //    OpenDatabase("TestDB");
     QQmlApplicationEngine engine;
     engine.addImportPath(":/qml");

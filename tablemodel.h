@@ -28,6 +28,7 @@ public:
     void addRow(); // add params
     QString changeTable(QString tableName);
 
+    static TableModel& foo();
 
     Q_INVOKABLE void updateData(const int row, const int column, QString newdata);
     Q_INVOKABLE void sortConditions(int column, QVariant conditions...);

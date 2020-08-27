@@ -3,55 +3,46 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 
-SplitView {
-    Item {
-        id: _parentItem
-        width: parent.width / 3
-        Layout.minimumWidth: Math.min(100, _root.width * 0.3)
-        Layout.maximumWidth: _root.width * 0.7
+TabView
+{
+    id: _tabView
 
-        DBInfoArea {
-            anchors.fill: parent
-        } // DBInfoArea
-    } // Item
+    Component.onCompleted: {
+        loadTab()
+        loadTab()
+        loadTab()
+    }
 
-    Item {
-        id: _mainArea
-         width: parent.width / 2
-         Layout.maximumWidth: _root.width * 0.9
-         Column {
-            Repeater {
-                model: 1
-                TabView
-                {
-                    id: _tabView
-                    width: _root.width - _parentItem.width
-                    height: _root.height - _menuBar.height
+    Component{
+        id: _tab
+        Column{
+        GridView {
+            width: _tabView.width
+            height: 30
+            cellHeight: 30
+            cellWidth: 200
+            model: 3
 
-                    Tab {
-                        id: _tab1
-                        width: _tabView.width
-                        height: _tabView.height
-                        title: "tab_1"
+            delegate: Rectangle{
+                id: _delegate
+//                width: 200
+//                height: 30
+                color: "green"
+                TextArea{
+                    anchors.centerIn: _delegate
+                    placeholderText: "Filter"
+                }
+            }
+        }
+        DBArea{
+            width: _tabView.width
+            height: _tabView.height - 30
+//            anchors.fill:parent
+        }
+        }
+    }
 
-                        DBArea {
-                            anchors.fill: _tab1
-                        } // DBArea
-
-                    } // Tab
-
-                    Tab {
-                        id: _tab2
-                        title: "tab_2"
-
-                        Rectangle {
-                            width: _tab2.width
-                            height: _tab2.height
-                            color: "green"
-                        } // Rectangle
-                    } // Tab
-                } // TabView
-            } // Repeater
-         } // Column
-    } // Item
-} // SplitView
+    function loadTab(){
+        _tabView.addTab("title", _tab)
+    }
+} // TabView
