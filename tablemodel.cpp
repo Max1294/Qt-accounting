@@ -202,7 +202,7 @@ QString TableModel::tablesFieldsFilter(QString key) const
 void TableModel::addColumn(QString column)
 {
     static int c = 1;
-    database().exec("ALTER TABLE " + database().tables()[m_currentTab] + " ADD " + column + QString::number(c) + " NULL");
+    database().exec("ALTER TABLE " + database().tables()[m_currentTab] + " ADD " + column + QString::number(c) + " TEXT");
     setTab(m_currentTab);
     ++c;
 }

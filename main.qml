@@ -14,43 +14,28 @@ ApplicationWindow {
 
     property alias __model: _main._model
 
-    //    Loader {
-    //        id: _loader
-    //        anchors.fill: parent
+//    TODO: Load DBArea after db is available
+//    Loader { id: _loader
+//        anchors.top: _tabBar.bottom
+//        anchors.topMargin: 31
+//        anchors.fill: parent
+//    }
 
-    //        Component.onCompleted: setSource("DBArea.qml", {"id": _main,
-    //                                             "anchors.top": _menuBar.bottom,
-    //                                             "anchors.bottom": _tabBar.top,
-    //                                             "anchors.fill": parent})
-    //        //        source: qsTr("qrc:/qml/MainWindowComponents/DBArea.qml")
-    //    }
+//    MouseArea {
+//        anchors.fill: parent
+//        onClicked: { _loader.source = "qrc:/qml/MainWindowComponents/DBArea.qml"}
+//    }
 
-    //    MouseArea {
-    //        anchors.fill: parent
-
-    //        onClicked: {
-    //            if(clicked) {
-    //                _loader.setSource("qrc:/qml/MainWindowComponents/DBArea.qml",
-    //                                      {"id": _main,
-    //                                      "anchors.top": _menuBar.bottom,
-    //                                      "anchors.bottom": _tabBar.top,
-    //                                      "anchors.fill": parent})
-    //            }
-    //        }
-    //    }
-
-    // TODO: Load DBArea after db is available
-
-    FileDialog {
-        id: fileDialog
-        folder: StandardPaths.writableLocation(StandardPaths.DesktopLocation)
-        currentFile: ""
-        onFileChanged: {
-            // load DBArea
-            console.log("file" + file)
-        }
-
-    }
+//    FileDialog {
+//        id: fileDialog
+//        folder: StandardPaths.writableLocation(StandardPaths.DesktopLocation)
+//        currentFile: ""
+//        onFileChanged: {
+//            // load DBArea
+//            _loader.source = "qrc:/qml/MainWindowComponents/DBArea.qml";
+//            console.log("file" + file)
+//        }
+//    }
 
     TabBar {
         id: _tabBar
@@ -88,7 +73,7 @@ ApplicationWindow {
         anchors.fill: parent
     }
 
-    // TODO make ScrollBars for table view
+////     TODO make ScrollBars for table view
 //    Rectangle {
 //        id: frame
 //        clip: true
@@ -121,10 +106,12 @@ ApplicationWindow {
 //            hoverEnabled: true
 //            active: hovered || pressed
 //            orientation: Qt.Horizontal
-//            size: frame.width / content.width
+//            size: 0.5
 //            anchors.left: parent.left
 //            anchors.right: parent.right
 //            anchors.bottom: parent.bottom
+
+//            Component.onCompleted: {console.log("size " + size)}
 //        }
 //    }
 

@@ -8,6 +8,28 @@ Rectangle {
 
     color: "grey"
 
+    ScrollBar {
+        id: _horisontalBar
+        hoverEnabled: true
+        active: hovered || pressed
+        orientation: Qt.Horizontal
+        size: 0.5
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+    }
+
+    ScrollBar {
+        id: vbar
+        hoverEnabled: true
+        active: hovered || pressed
+        orientation: Qt.Vertical
+        size: 0.5
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+    }
+
     VerticalHeaderView {
         id: _verticalHeader
         implicitWidth: 30
@@ -15,7 +37,7 @@ Rectangle {
         interactive: false
         rowSpacing: 1
 
-        model: _tableView.rows + 1
+        model: _tableView.columns === 0 ? _tableView.rows : _tableView.rows + 1
 
         delegate: Rectangle {
             id: _verticalHeaderDelegate
@@ -122,6 +144,8 @@ Rectangle {
         columnSpacing: 1
         rowSpacing: 1
         interactive : false
+        x: _horisontalBar.position
+        y: vbar.position
 
         model: DatabaseModel{}
 
